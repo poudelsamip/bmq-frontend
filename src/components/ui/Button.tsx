@@ -1,0 +1,43 @@
+import { type ButtonHTMLAttributes } from "react";
+
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: "primary" | "ghost" | "social" | "outline";
+  fullWidth?: boolean;
+}
+
+export default function Button({
+  variant = "primary",
+  fullWidth = false,
+  className = "",
+  children,
+  ...props
+}: ButtonProps) {
+  const base =
+    "font-medium focus:outline-none transition-all";
+
+  const variants = {
+    /** Indigo filled — main CTAs */
+    primary:
+      "text-sm text-white bg-[#4f46e5] rounded-sm py-2 hover:opacity-90",
+    /** Text-only link style */
+    ghost:
+      "text-sm text-[#3525cd] bg-transparent rounded-sm py-0 hover:text-[#4f46e5]",
+    /** Bordered neutral — OAuth / social login buttons */
+    social:
+      "text-sm text-[#191c1e] bg-white border border-[#e0e3e5] rounded-sm py-2 flex items-center justify-center gap-2 hover:bg-[#f7f9fb]",
+    /** Bordered white — secondary hero CTAs */
+    outline:
+      "text-sm text-slate-800 bg-white border border-[#c7c4d8] rounded py-3 px-6 flex items-center justify-center gap-2 hover:bg-slate-50",
+  };
+
+  const width = fullWidth ? "w-full" : "";
+
+  return (
+    <button
+      className={`${base} ${variants[variant]} ${width} ${className}`}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+}
