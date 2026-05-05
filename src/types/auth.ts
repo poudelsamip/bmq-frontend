@@ -1,8 +1,6 @@
-export interface SafeUser {
+export interface AuthUser {
     id: string;
     name: string;
     email: string;
-    authProvider: "local" | "google" | "github";
-    isEmailVerified: boolean;
-    createdAt: string;
+    plan: string;
 }

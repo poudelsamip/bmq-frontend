@@ -1,23 +1,29 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import {
+    createContext,
+    useContext,
+    useState,
+    useEffect,
+    type ReactNode,
+} from "react";
 
 import { authApi } from "../api/auth.api";
 import { setApiToken } from "../api/client";
 import { useNavigate } from "react-router-dom";
-import type { SafeUser } from "../types/auth";
+import type { AuthUser } from "../types/auth";
 
 interface AuthContextType {
-    user: SafeUser | null;
+    user: AuthUser | null;
     accessToken: string | null;
     isAuthenticated: boolean;
     isLoading: boolean;
-    login: (token: string, userData: SafeUser) => void;
+    login: (token: string, userData: AuthUser) => void;
     logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [user, setUser] = useState<SafeUser | null>(null);
+    const [user, setUser] = useState<AuthUser | null>(null);
     const [accessToken, setAccessToken] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
@@ -30,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 if (res.success && res.data?.accessToken) {
                     setApiToken(res.data.accessToken);
                     setAccessToken(res.data.accessToken);
-                    
+
                     // Fetch user info
                     const userRes = await authApi.getMe();
                     if (userRes.success && userRes.data?.user) {
@@ -60,16 +66,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             navigate("/login");
         };
 
-        window.addEventListener('auth:token_refreshed', handleTokenRefreshed);
-        window.addEventListener('auth:logout', handleLogoutEvent);
+        window.addEventListener("auth:token_refreshed", handleTokenRefreshed);
+        window.addEventListener("auth:logout", handleLogoutEvent);
 
         return () => {
-            window.removeEventListener('auth:token_refreshed', handleTokenRefreshed);
-            window.removeEventListener('auth:logout', handleLogoutEvent);
+            window.removeEventListener(
+                "auth:token_refreshed",
+                handleTokenRefreshed,
+            );
+            window.removeEventListener("auth:logout", handleLogoutEvent);
         };
     }, [navigate]);
 
-    const login = (token: string, userData: SafeUser) => {
+    const login = (token: string, userData: AuthUser) => {
         setApiToken(token);
         setAccessToken(token);
         setUser(userData);

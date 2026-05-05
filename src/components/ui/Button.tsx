@@ -24,7 +24,7 @@ export default function Button({
         ghost: "text-sm text-[#3525cd] bg-transparent rounded-sm py-0 hover:text-[#4f46e5]",
 
         /** Bordered neutral — OAuth / social login buttons */
-        social: "text-sm text-[#191c1e] bg-white border border-[#e0e3e5] rounded-sm py-2 flex items-center justify-center gap-2 hover:bg-[#f7f9fb] hover:border-[#c7c9cc]",
+        social: "text-sm text-[#191c1e] bg-white border border-[#e0e3e5] rounded-sm py-2 flex items-center justify-center gap-2 hover:bg-[#f0f2f5] hover:border-[#b0b3b8]",
 
         /** Bordered white — secondary hero CTAs */
         outline:
