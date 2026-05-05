@@ -2,16 +2,86 @@
 import { useState } from "react";
 import { GoogleIcon, GitHubIcon } from "../components/SocialIcons";
 import { Boxes, Mail, Lock } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
+import EmailVerification from "../components/EmailVerification";
+import { authApi } from "../api/auth.api";
+import { useAuth } from "../context/AuthContext";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleLogin = () => {
-        console.log({ email, password });
+    const { login } = useAuth();
+    const navigate = useNavigate();
+    const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [showVerification, setShowVerification] = useState(false);
+    const [pendingEmail, setPendingEmail] = useState("");
+
+    const handleLogin = async () => {
+        setError(null);
+        setIsLoading(true);
+        try {
+            const res = await authApi.login({ email, password });
+            if (res.requiresVerification) {
+                setPendingEmail(email);
+                setShowVerification(true);
+                return;
+            }
+            if (res.data?.accessToken && res.data?.user) {
+                login(res.data.accessToken, res.data.user);
+                navigate("/dashboard");
+            }
+        } catch (err: any) {
+            const message =
+                err.response?.data?.message ||
+                "An error occurred during login.";
+            setError(message);
+        } finally {
+            setIsLoading(false);
+        }
     };
+
+    const handleVerifyEmail = async (otp: string) => {
+        const res = await authApi.verifyEmail({
+            email: pendingEmail,
+            code: otp,
+        });
+        if (res.data?.accessToken && res.data?.user) {
+            login(res.data.accessToken, res.data.user);
+            navigate("/dashboard");
+        }
+    };
+
+    const handleResendCode = async () => {
+        await authApi.resendVerification({ email: pendingEmail });
+    };
+
+    const onVerificationSuccess = () => {
+        setShowVerification(false);
+        setPendingEmail("");
+    };
+
+    const backToLogin = () => {
+        setShowVerification(false);
+        setPendingEmail("");
+        setError(null);
+    };
+
+    if (showVerification) {
+        return (
+            <EmailVerification
+                email={pendingEmail}
+                onVerify={handleVerifyEmail}
+                onResend={handleResendCode}
+                onSuccess={onVerificationSuccess}
+                onBack={backToLogin}
+                showBackButton={true}
+                showAppHeader={true}
+            />
+        );
+    }
 
     return (
         <div className="bg-[#f7f9fb] min-h-screen flex items-start sm:items-center justify-center px-4 py-6 text-[#191c1e]">
@@ -31,13 +101,21 @@ export default function LoginPage() {
 
                 {/* Form */}
                 <div className="flex flex-col gap-4">
+                    {error && (
+                        <div className="bg-red-50 text-red-600 text-sm p-3 rounded border border-red-100">
+                            {error}
+                        </div>
+                    )}
                     {/* Email */}
                     <div className="flex flex-col gap-1.5">
                         <label htmlFor="email" className="text-sm font-medium">
                             Email address
                         </label>
                         <div className="relative flex items-center">
-                            <Mail size={18} className="absolute left-2 text-[#464555]" />
+                            <Mail
+                                size={18}
+                                className="absolute left-2 text-[#464555]"
+                            />
                             <input
                                 id="email"
                                 type="email"
@@ -66,7 +144,10 @@ export default function LoginPage() {
                             </a>
                         </div>
                         <div className="relative flex items-center">
-                            <Lock size={18} className="absolute left-2 text-[#464555]" />
+                            <Lock
+                                size={18}
+                                className="absolute left-2 text-[#464555]"
+                            />
                             <input
                                 id="password"
                                 type="password"
@@ -79,8 +160,13 @@ export default function LoginPage() {
                     </div>
 
                     {/* Submit */}
-                    <Button fullWidth onClick={handleLogin} className="mt-1">
-                        Login
+                    <Button
+                        fullWidth
+                        onClick={handleLogin}
+                        className="mt-1"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? "Logging in..." : "Login"}
                     </Button>
                 </div>
 
@@ -93,11 +179,19 @@ export default function LoginPage() {
 
                 {/* Social */}
                 <div className="flex flex-col gap-2.5 mb-3">
-                    <Button variant="social" fullWidth>
+                    <Button 
+                        variant="social" 
+                        fullWidth
+                        onClick={() => window.location.href = "http://localhost:3000/api/auth/google"}
+                    >
                         <GoogleIcon />
                         Continue with Google
                     </Button>
-                    <Button variant="social" fullWidth>
+                    <Button 
+                        variant="social" 
+                        fullWidth
+                        onClick={() => window.location.href = "http://localhost:3000/api/auth/github"}
+                    >
                         <GitHubIcon />
                         Continue with GitHub
                     </Button>
@@ -106,7 +200,8 @@ export default function LoginPage() {
                 {/* Footer */}
                 <p className="text-center text-xs text-[#464555]">
                     Don't have an account?{" "}
-                    <Link to={'/signup'}
+                    <Link
+                        to={"/signup"}
                         className="text-[#3525cd] font-medium hover:text-[#4f46e5]"
                     >
                         Sign Up
