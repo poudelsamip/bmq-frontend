@@ -1,7 +1,7 @@
 import { type ButtonHTMLAttributes } from "react";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: "primary" | "ghost" | "social" | "outline";
+    variant?: "primary" | "ghost" | "social" | "outline" | "danger";
     fullWidth?: boolean;
 }
 
@@ -29,6 +29,8 @@ export default function Button({
         /** Bordered white — secondary hero CTAs */
         outline:
             "text-sm text-slate-800 bg-white border border-[#c7c4d8] rounded py-3 px-6 flex items-center justify-center gap-2 hover:bg-slate-50 hover:border-[#b5b2c8]",
+
+        danger: "text-sm text-white bg-red-600 rounded-sm py-2 px-2 hover:bg-red-700 hover:shadow-sm",
     };
 
     const width = fullWidth ? "w-full" : "";

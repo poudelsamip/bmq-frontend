@@ -3,105 +3,90 @@ import {
     useContext,
     useState,
     useEffect,
+    useRef,
+    useCallback,
     type ReactNode,
 } from "react";
-
-import { authApi } from "../api/auth.api";
-import { setApiToken } from "../api/client";
 import { useNavigate } from "react-router-dom";
+import { authApi } from "../api/auth.api";
+import { tokenStore } from "../api/client";
 import type { AuthUser } from "../types/auth";
 
-interface AuthContextType {
+interface AuthCtx {
     user: AuthUser | null;
-    accessToken: string | null;
     isAuthenticated: boolean;
     isLoading: boolean;
-    login: (token: string, userData: AuthUser) => void;
-    logout: () => void;
+    login: (token: string, user: AuthUser) => void;
+    logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const Ctx = createContext<AuthCtx | undefined>(undefined);
 
+// auth provider
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<AuthUser | null>(null);
-    const [accessToken, setAccessToken] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
-
+    const navigateRef = useRef(navigate);
     useEffect(() => {
-        const initAuth = async () => {
-            try {
-                // Try to refresh token on load
-                const res = await authApi.refresh();
-                if (res.success && res.data?.accessToken) {
-                    setApiToken(res.data.accessToken);
-                    setAccessToken(res.data.accessToken);
+        navigateRef.current = navigate;
+    });
 
-                    // Fetch user info
-                    const userRes = await authApi.getMe();
-                    if (userRes.success && userRes.data?.user) {
-                        setUser(userRes.data.user);
-                    }
+    // stable login / logout
+    const login = useCallback((token: string, userData: AuthUser) => {
+        tokenStore.set(token);
+        setUser(userData);
+    }, []);
+
+    const logout = useCallback(async () => {
+        try {
+            await authApi.logout();
+        } catch {
+            // ignore - clear state regardless
+        } finally {
+            tokenStore.set(null);
+            setUser(null);
+            navigateRef.current("/login", { replace: true });
+        }
+    }, []);
+
+    // Boot: rehydrate from HttpOnly refresh cookie
+    // Keeps the user logged in across hard reloads.
+    // The access token lives only in memory — a reload clears it.
+    // The refresh cookie (HttpOnly, Secure) survives the reload and lets
+    // us mint a new access token silently here before rendering anything.
+    useEffect(() => {
+        const rehydrate = async () => {
+            try {
+                const res = await authApi.refresh();
+                if (res.data?.accessToken && res.data?.user) {
+                    login(res.data.accessToken, res.data.user);
                 }
-            } catch (err) {
-                // Token refresh failed or user is not logged in.
-                console.log("No active session.");
+            } catch {
+                // no session - show login
             } finally {
                 setIsLoading(false);
             }
         };
 
-        initAuth();
+        rehydrate();
+    }, [login]);
 
-        // Listen for token refresh events from interceptor
-        const handleTokenRefreshed = (e: Event) => {
-            const customEvent = e as CustomEvent<string>;
-            setAccessToken(customEvent.detail);
-        };
-
-        // Listen for global logout events from interceptor (e.g. refresh failed)
-        const handleLogoutEvent = () => {
+    // Interceptor -> session expired
+    useEffect(() => {
+        const handler = () => {
             setUser(null);
-            setAccessToken(null);
-            navigate("/login");
+            tokenStore.set(null);
+            navigateRef.current("/login", { replace: true });
         };
-
-        window.addEventListener("auth:token_refreshed", handleTokenRefreshed);
-        window.addEventListener("auth:logout", handleLogoutEvent);
-
-        return () => {
-            window.removeEventListener(
-                "auth:token_refreshed",
-                handleTokenRefreshed,
-            );
-            window.removeEventListener("auth:logout", handleLogoutEvent);
-        };
-    }, [navigate]);
-
-    const login = (token: string, userData: AuthUser) => {
-        setApiToken(token);
-        setAccessToken(token);
-        setUser(userData);
-    };
-
-    const logout = async () => {
-        try {
-            await authApi.logout();
-        } catch (e) {
-            console.error("Logout error", e);
-        } finally {
-            setApiToken(null);
-            setAccessToken(null);
-            setUser(null);
-            navigate("/login");
-        }
-    };
+        window.addEventListener("auth:expired", handler);
+        return () => window.removeEventListener("auth:expired", handler);
+    }, []);
 
     return (
-        <AuthContext.Provider
+        <Ctx.Provider
             value={{
                 user,
-                accessToken,
                 isAuthenticated: !!user,
                 isLoading,
                 login,
@@ -109,14 +94,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }}
         >
             {children}
-        </AuthContext.Provider>
+        </Ctx.Provider>
     );
 }
 
 export function useAuth() {
-    const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error("useAuth must be used within an AuthProvider");
-    }
-    return context;
+    const ctx = useContext(Ctx);
+    if (!ctx) throw new Error("useAuth must be used within <AuthProvider>");
+    return ctx;
 }

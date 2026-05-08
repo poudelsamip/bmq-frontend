@@ -1,94 +1,85 @@
-import axios from 'axios';
+import axios, { type InternalAxiosRequestConfig } from "axios";
 
-const apiClient = axios.create({
-    baseURL: 'http://localhost:3000/api',
-    withCredentials: true,
-});
+const BASE = import.meta.env.VITE_API_URL ?? "http://localhost:3000/api";
 
-// We will add interceptors later when AuthContext is ready, 
-// or manage token injection via Axios interceptors directly if we store it outside React state,
-// but usually it's easier to inject it if we have a simple token manager or if we add it during the request.
-// For now, let's keep a module-level variable for the token to easily inject it.
-let currentToken: string | null = null;
-
-export const setApiToken = (token: string | null) => {
-    currentToken = token;
+// Token store
+let _token: string | null = null;
+export const tokenStore = {
+    get: () => _token,
+    set: (t: string | null) => {
+        _token = t;
+    },
 };
 
-apiClient.interceptors.request.use((config) => {
-    if (currentToken) {
-        config.headers.Authorization = `Bearer ${currentToken}`;
-    }
+// axios instance
+const api = axios.create({ baseURL: BASE, withCredentials: true });
+
+// Request interceptor to add the token
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+    if (_token) config.headers.Authorization = `Bearer ${_token}`;
     return config;
 });
 
-// Response interceptor for handling 401s could be complex if it requires context, 
-// but we can implement a basic retry mechanism.
-let isRefreshing = false;
-let failedQueue: { resolve: (value?: unknown) => void; reject: (reason?: any) => void }[] = [];
-
-const processQueue = (error: any, token: string | null = null) => {
-    failedQueue.forEach(prom => {
-        if (error) {
-            prom.reject(error);
-        } else {
-            prom.resolve(token);
-        }
-    });
-    failedQueue = [];
+// silent refresh and replay
+type Waiter = {
+    resolve: (token: string) => void;
+    reject: (e: unknown) => void;
 };
+let refreshing = false;
+let waiters: Waiter[] = [];
 
-apiClient.interceptors.response.use(
-    (response) => response,
+function flush(err: unknown, token?: string) {
+    waiters.forEach((w) => (err ? w.reject(err) : w.resolve(token!)));
+    waiters = [];
+}
+
+const SKIP = ["/auth/refresh", "/auth/login", "/auth/signup"];
+
+api.interceptors.response.use(
+    (r) => r,
     async (error) => {
-        const originalRequest = error.config;
+        const cfg = error.config;
+        const skip = SKIP.some((u) => cfg?.url?.includes(u));
 
-        if (error.response?.status === 401 && !originalRequest._retry && originalRequest.url !== '/auth/refresh' && originalRequest.url !== '/auth/login') {
-            if (isRefreshing) {
-                return new Promise(function (resolve, reject) {
-                    failedQueue.push({ resolve, reject });
-                })
-                    .then(token => {
-                        originalRequest.headers.Authorization = 'Bearer ' + token;
-                        return apiClient(originalRequest);
-                    })
-                    .catch(err => {
-                        return Promise.reject(err);
-                    });
-            }
-
-            originalRequest._retry = true;
-            isRefreshing = true;
-
-            try {
-                // Try to refresh
-                const { data } = await axios.post<{ success: boolean; data: { accessToken: string } }>(
-                    'http://localhost:3000/api/auth/refresh',
-                    {},
-                    { withCredentials: true }
-                );
-                
-                const newToken = data.data.accessToken;
-                setApiToken(newToken);
-                
-                // Dispatch a custom event so the React Context can pick up the new token if needed
-                window.dispatchEvent(new CustomEvent('auth:token_refreshed', { detail: newToken }));
-
-                processQueue(null, newToken);
-                originalRequest.headers.Authorization = `Bearer ${newToken}`;
-                return apiClient(originalRequest);
-            } catch (err) {
-                processQueue(err, null);
-                setApiToken(null);
-                window.dispatchEvent(new CustomEvent('auth:logout'));
-                return Promise.reject(err);
-            } finally {
-                isRefreshing = false;
-            }
+        if (error.response?.status !== 401 || cfg?._retry || skip) {
+            return Promise.reject(error);
         }
 
-        return Promise.reject(error);
-    }
+        if (refreshing) {
+            const token = await new Promise<string>((resolve, reject) => {
+                waiters.push({ resolve, reject });
+            });
+            cfg.headers.Authorization = `Bearer ${token}`;
+            return api(cfg);
+        }
+
+        cfg._retry = true;
+        refreshing = true;
+
+        try {
+            const { data } = await axios.post<{
+                data: { accessToken: string; user: unknown };
+            }>(`${BASE}/auth/refresh`, {}, { withCredentials: true });
+
+            const token = data.data.accessToken;
+            tokenStore.set(token);
+
+            flush(null, token);
+
+            cfg.headers.Authorization = `Bearer ${token}`;
+
+            return api(cfg);
+        } catch (e) {
+            flush(e);
+            tokenStore.set(null);
+
+            window.dispatchEvent(new Event("auth:expired"));
+
+            return Promise.reject(e);
+        } finally {
+            refreshing = false;
+        }
+    },
 );
 
-export default apiClient;
+export default api;

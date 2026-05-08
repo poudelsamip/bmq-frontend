@@ -1,77 +1,53 @@
+import api from "./client";
 import type { AuthUser } from "../types/auth";
-import apiClient from "./client";
 
-export interface SignupRequest {
-    name: string;
-    email: string;
-    password: string;
-}
-
-export interface VerifyEmailRequest {
-    email: string;
-    code: string;
-}
-
-export interface LoginRequest {
-    email: string;
-    password: string;
-}
-
-export interface AuthResponse<T = any> {
+export interface ApiResponse<T> {
     success: boolean;
     message: string;
     data: T;
-    requiresVerification?: boolean;
+}
+
+export interface Session {
+    accessToken: string;
+    user: AuthUser;
 }
 
 export const authApi = {
-    signup: async (data: SignupRequest) => {
-        const response = await apiClient.post<AuthResponse<{ user: AuthUser }>>(
+    signup: async (body: { name: string; email: string; password: string }) => {
+        const res = await api.post<ApiResponse<{ user: AuthUser }>>(
             "/auth/signup",
-            data,
+            body,
         );
-        return response.data;
+        return res.data;
     },
 
-    login: async (data: LoginRequest) => {
-        const response = await apiClient.post<
-            AuthResponse<{ accessToken: string; user: AuthUser }>
-        >("/auth/login", data);
-        return response.data;
+    login: async (body: { email: string; password: string }) => {
+        const res = await api.post<
+            ApiResponse<Session> & { requiresVerification?: boolean }
+        >("/auth/login", body);
+        return res.data;
     },
 
-    verifyEmail: async (data: VerifyEmailRequest) => {
-        const response = await apiClient.post<
-            AuthResponse<{ accessToken: string; user: AuthUser }>
-        >("/auth/verify-email", data);
-        return response.data;
-    },
-
-    resendVerification: async (data: { email: string }) => {
-        const response = await apiClient.post<AuthResponse<null>>(
-            "/auth/resend-verification",
-            data,
+    verifyEmail: async (body: { email: string; code: string }) => {
+        const res = await api.post<ApiResponse<Session>>(
+            "/auth/verify-email",
+            body,
         );
-        return response.data;
+        return res.data;
     },
 
-    logout: async () => {
-        const response =
-            await apiClient.post<AuthResponse<null>>("/auth/logout");
-        return response.data;
+    resendVerification: async (body: { email: string }) => {
+        const res = await api.post("/auth/resend-verification", body);
+        return res.data;
     },
 
     refresh: async () => {
-        const response =
-            await apiClient.post<AuthResponse<{ accessToken: string }>>(
-                "/auth/refresh",
-            );
-        return response.data;
+        const res = await api.post<ApiResponse<Session>>("/auth/refresh");
+        return res.data;
     },
 
-    getMe: async () => {
-        const response =
-            await apiClient.get<AuthResponse<{ user: AuthUser }>>("/auth/me");
-        return response.data;
+    logout: async () => {
+        const res = await api.post<ApiResponse<null>>("/auth/logout");
+        return res.data;
     },
 };

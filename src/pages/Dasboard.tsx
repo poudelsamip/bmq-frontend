@@ -1,13 +1,3 @@
-import { useAuth } from "../context/AuthContext";
-
-const Dasboard = () => {
-    const { user } = useAuth();
-
-    if (!user) {
-        return <div>Not authenticated</div>;
-    }
-
-    return <div>Dasboard - {user.email}</div>;
-};
-
-export default Dasboard;
+// Redirect /dashboard to ProjectsPage by default.
+// This file is kept for backwards-compatibility with the existing route name.
+export { default } from "./DashboardLayout";
