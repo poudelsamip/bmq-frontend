@@ -2,19 +2,20 @@ import CurrentPlan from "../components/billings/CurrentPlan";
 import PlansPricing from "../components/billings/PlansPricing";
 import RecentTransactions from "../components/billings/RecentTransactions";
 
-export default function BillingContent() {
+export default function BillingPage() {
     return (
-        <main className="min-h-screen text-[#151c27]">
-            <div className="max-w-275 space-y-4">
-                {/* Current Plan */}
-                <CurrentPlan />
+        <div
+            className="flex flex-col"
+            style={{ maxWidth: 1200, margin: "0 auto", gap: 16 }}
+        >
+            {/* Current Plan */}
+            <CurrentPlan />
 
-                {/* Pricing */}
-                <PlansPricing />
+            {/* Pricing Plans Grid */}
+            <PlansPricing />
 
-                {/* Transactions */}
-                <RecentTransactions />
-            </div>
-        </main>
+            {/* Recent Transactions */}
+            <RecentTransactions />
+        </div>
     );
 }

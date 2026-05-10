@@ -9,33 +9,48 @@ export default function PlanUsageBanner({ used, total, onUpgrade }: PlanUsageBan
 
     return (
         <div
-            className="flex items-center justify-between px-4 py-2 rounded-sm"
+            className="flex items-center justify-between px-4 py-3 rounded-lg"
             style={{
-                backgroundColor: "#f0f3ff",
-                border: "1px solid #c4c5da",
+                backgroundColor: "var(--color-surface-container-low)",
+                border: "1px solid var(--color-outline-variant)",
             }}
         >
             {/* Left: label + bar + count */}
             <div className="flex items-center gap-4">
                 <span
-                    className="text-[10px] font-semibold uppercase tracking-widest whitespace-nowrap"
-                    style={{ color: "#444657" }}
+                    className="uppercase tracking-widest whitespace-nowrap"
+                    style={{
+                        fontSize: 11,
+                        fontWeight: 600,
+                        letterSpacing: "0.08em",
+                        color: "var(--color-on-surface-variant)",
+                    }}
                 >
                     Plan Usage
                 </span>
 
                 {/* Progress bar */}
                 <div
-                    className="w-48 h-2 rounded-sm overflow-hidden"
-                    style={{ backgroundColor: "#dce2f3" }}
+                    className="overflow-hidden rounded-full"
+                    style={{
+                        width: 192,
+                        height: 6,
+                        backgroundColor: "var(--color-surface-container-highest)",
+                    }}
                 >
                     <div
-                        className="h-full rounded-sm transition-all duration-500"
-                        style={{ width: `${percent}%`, backgroundColor: "#0038ff" }}
+                        className="h-full rounded-full transition-all duration-500"
+                        style={{
+                            width: `${percent}%`,
+                            backgroundColor: "var(--color-primary)",
+                        }}
                     />
                 </div>
 
-                <span className="text-xs font-medium whitespace-nowrap" style={{ color: "#151c27" }}>
+                <span
+                    className="whitespace-nowrap font-medium"
+                    style={{ fontSize: 12, color: "var(--color-on-surface)" }}
+                >
                     {used} / {total} projects used
                 </span>
             </div>
@@ -43,8 +58,8 @@ export default function PlanUsageBanner({ used, total, onUpgrade }: PlanUsageBan
             {/* Right: upgrade link */}
             <button
                 onClick={onUpgrade}
-                className="text-xs font-semibold transition-opacity hover:opacity-70 whitespace-nowrap"
-                style={{ color: "#0038ff" }}
+                className="font-medium transition-opacity hover:underline whitespace-nowrap"
+                style={{ fontSize: 12, color: "var(--color-primary)" }}
             >
                 Upgrade Plan
             </button>

@@ -5,10 +5,8 @@ import { useNavigate } from "react-router-dom";
 import ProjectCard from "../components/dashboard/ProjectCard";
 import CreateProjectCard from "../components/dashboard/CreateProjectCard";
 import CreateProjectModal from "../components/projects/CreateProjectModal";
+import InfraGraph from "../components/dashboard/InfraGraph";
 
-// ─── Static mock data ───────────────────────────────────────────────────────
-
-// ─── Component ────────────────────────────────────────────────────────────────
 export default function ProjectsPage() {
     const navigate = useNavigate();
 
@@ -62,12 +60,19 @@ export default function ProjectsPage() {
         <div className="flex flex-col" style={{ gap: 24 }}>
             {/* Plan usage slim bar */}
             <PlanUsageBanner
-                used={2}
+                used={projects.length}
                 total={5}
                 onUpgrade={() => navigate("/dashboard/billing")}
             />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            {/* Projects grid */}
+            <section
+                className="grid grid-cols-1"
+                style={{
+                    gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+                    gap: 16,
+                }}
+            >
                 {projects.map((project) => (
                     <ProjectCard
                         key={project.id}
@@ -77,7 +82,10 @@ export default function ProjectsPage() {
                     />
                 ))}
                 <CreateProjectCard onCreate={onCreateProject} />
-            </div>
+            </section>
+
+            {/* Global Infrastructure Graph */}
+            <InfraGraph />
 
             {/* Create Project Modal */}
             {showModal && (

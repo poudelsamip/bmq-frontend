@@ -16,7 +16,7 @@ export default function DashboardLayout() {
     return (
         <div
             className="min-h-screen flex"
-            style={{ backgroundColor: "#f0f3ff", color: "#151c27" }}
+            style={{ backgroundColor: "var(--color-background)", color: "var(--color-on-surface)" }}
         >
             {/* Fixed sidebar — 220px wide */}
             <DashboardSidebar />
@@ -31,7 +31,7 @@ export default function DashboardLayout() {
                     className="flex-1 overflow-y-auto"
                     style={{ marginTop: 64, padding: "24px" }}
                 >
-                    <div style={{ margin: "0 auto" }}>
+                    <div style={{ maxWidth: 1440, margin: "0 auto" }}>
                         <Outlet />
                     </div>
                 </main>
