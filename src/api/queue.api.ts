@@ -106,4 +106,8 @@ export const queueApi = {
         );
         return response.data;
     },
+
+    streamEventSource: (projectId: string, queueName: string) => {
+        return `http://localhost:3000/api/project/${projectId}/queues/${queueName}/stream`;
+    },
 };

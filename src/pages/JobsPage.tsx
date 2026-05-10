@@ -4,7 +4,7 @@ import { queueApi, type Job } from "../api/queue.api";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
-import DrawerJobDetails from "../components/Jobs/DrawerJobDetails";
+import JobDrawer from "../components/Jobs/JobDrawer";
 
 export default function JobsPage() {
     const { id, queueName } = useParams();
@@ -40,13 +40,19 @@ export default function JobsPage() {
     }
 
     return (
-        <main className="p-6 bg-white min-h-screen -m-6">
+        <main className="relative p-6 h-[calc(100vh-64px)] bg-white -m-6">
             {showDrawer && (
-                <div className="absolute top-0 right-0 w-96 h-full bg-white shadow-lg p-4 z-50">
-                    <DrawerJobDetails jobId={selectedJobId!} />
-                </div>
+                <JobDrawer
+                    jobId={selectedJobId}
+                    onClose={() => setShowDrawer(false)}
+                />
             )}
             <>
+                <div>
+                    <p className="uppercase tracking-wide font-bold text-xl mb-2">
+                        queue: {queueName}
+                    </p>
+                </div>
                 <JobsHeader />
                 <JobsTable jobs={jobs || []} onJobClick={onJobClick} />
             </>

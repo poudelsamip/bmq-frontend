@@ -38,4 +38,18 @@ export const projectApi = {
         const response = await api.get<ApiResponse<Project>>(`/project/${id}`);
         return response.data;
     },
+
+    createProject: async (
+        name: string,
+        redisUrl: string,
+        description: string | null,
+    ) => {
+        const response = await api.post("/project", {
+            name,
+            redis_url: redisUrl,
+            description,
+        });
+
+        return response.data;
+    },
 };

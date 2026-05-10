@@ -9,7 +9,7 @@ export const JobRow = ({
     onJobClick: (jobId: string) => void;
 }) => {
     return (
-        <tr className="border-t border-gray-200 hover:bg-gray-50">
+        <tr className="border-t h-12 border-gray-200 hover:bg-gray-50">
             <td className="px-4 py-3 text-sm text-gray-500">{job.id}</td>
 
             <td

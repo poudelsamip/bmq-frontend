@@ -4,6 +4,7 @@ import PlanUsageBanner from "../components/dashboard/PlanUsageBanner";
 import { useNavigate } from "react-router-dom";
 import ProjectCard from "../components/dashboard/ProjectCard";
 import CreateProjectCard from "../components/dashboard/CreateProjectCard";
+import CreateProjectModal from "../components/projects/CreateProjectModal";
 
 // ─── Static mock data ───────────────────────────────────────────────────────
 
@@ -12,6 +13,7 @@ export default function ProjectsPage() {
     const navigate = useNavigate();
 
     const [projects, setProjects] = useState<AllProjects[]>([]);
+    const [showModal, setShowModal] = useState(false);
 
     const getProjects = async () => {
         const res = await projectApi.getAll();
@@ -27,7 +29,29 @@ export default function ProjectsPage() {
     };
 
     const onCreateProject = () => {
-        console.log("Create project");
+        setShowModal(true);
+    };
+
+    const onCloseModal = () => {
+        setShowModal(false);
+    };
+
+    const handleSubmit = async (form: {
+        name: string;
+        redisConnection: string;
+        description: string;
+    }) => {
+        try {
+            await projectApi.createProject(
+                form.name,
+                form.redisConnection,
+                form.description,
+            );
+            onCloseModal();
+            getProjects();
+        } catch (error) {
+            console.error("Error creating project:", error);
+        }
     };
 
     useEffect(() => {
@@ -54,6 +78,14 @@ export default function ProjectsPage() {
                 ))}
                 <CreateProjectCard onCreate={onCreateProject} />
             </div>
+
+            {/* Create Project Modal */}
+            {showModal && (
+                <CreateProjectModal
+                    onClose={onCloseModal}
+                    onSubmit={handleSubmit}
+                />
+            )}
         </div>
     );
 }
