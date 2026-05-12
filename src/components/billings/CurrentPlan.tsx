@@ -1,7 +1,7 @@
 export default function CurrentPlan() {
     return (
         <section
-            className="flex flex-col md:flex-row justify-between md:items-end gap-6 rounded-xl"
+            className="flex flex-col md:flex-row justify-between md:items-end gap-6 rounded-sm"
             style={{
                 backgroundColor: "var(--color-surface-container)",
                 border: "1px solid var(--color-outline-variant)",
@@ -74,7 +74,7 @@ export default function CurrentPlan() {
 
             {/* Right: manage plan button */}
             <button
-                className="rounded-xl transition-colors"
+                className="rounded-sm transition-colors"
                 style={{
                     border: "1px solid var(--color-primary)",
                     color: "var(--color-primary)",

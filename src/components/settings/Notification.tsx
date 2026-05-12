@@ -15,42 +15,64 @@ export default function Notification() {
     return (
         <section className="space-y-5">
             <div className="space-y-1">
-                <h3 className="text-[20px] font-medium">Notifications</h3>
-                <p className="text-[14px] text-[#5a5f6d]">
+                <h3
+                    className="text-[20px] font-medium"
+                    style={{ color: "var(--color-on-surface)", fontFamily: "Manrope, sans-serif" }}
+                >
+                    Notifications
+                </h3>
+                <p className="text-[14px]" style={{ color: "var(--color-on-surface-variant)" }}>
                     Manage how you receive alerts and system updates.
                 </p>
             </div>
 
-            <div className="bg-white border border-[#b6b8cc] rounded-sm overflow-hidden">
+            <div
+                className="rounded overflow-hidden"
+                style={{
+                    background: "var(--color-surface-container)",
+                    border: "1px solid var(--color-outline-variant)",
+                }}
+            >
                 {toggles.map((t, i) => (
                     <div
                         key={i}
-                        className={`flex items-center justify-between px-6 py-5 ${
-                            i !== toggles.length - 1
-                                ? "border-b border-[#b6b8cc]"
-                                : ""
-                        }`}
+                        className="flex items-center justify-between px-6 py-5"
+                        style={
+                            i < toggles.length - 1
+                                ? { borderBottom: "1px solid var(--color-outline-variant)" }
+                                : {}
+                        }
                     >
                         <div className="space-y-1">
-                            <p className="text-[14px] font-medium text-[#2b2f3a]">
+                            <p
+                                className="text-[14px] font-medium"
+                                style={{ color: "var(--color-on-surface)" }}
+                            >
                                 {t.title}
                             </p>
-                            <p className="text-[14px] text-[#5a5f6d]">
+                            <p
+                                className="text-[14px]"
+                                style={{ color: "var(--color-on-surface-variant)" }}
+                            >
                                 {t.desc}
                             </p>
                         </div>
 
                         {/* Toggle */}
-                        <div className="relative w-10 h-5">
+                        <div className="relative w-10 h-5 shrink-0">
                             <div
-                                className={`w-full h-full rounded-full transition ${
-                                    t.enabled ? "bg-[#0038ff]" : "bg-[#b6b8cc]"
-                                }`}
+                                className="w-full h-full rounded-full transition-colors"
+                                style={{
+                                    background: t.enabled
+                                        ? "var(--color-primary)"
+                                        : "var(--color-outline-variant)",
+                                }}
                             />
                             <div
-                                className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition ${
+                                className={`absolute top-0.5 h-4 w-4 rounded-full transition-all ${
                                     t.enabled ? "right-0.5" : "left-0.5"
                                 }`}
+                                style={{ background: "var(--color-surface-container-lowest)" }}
                             />
                         </div>
                     </div>

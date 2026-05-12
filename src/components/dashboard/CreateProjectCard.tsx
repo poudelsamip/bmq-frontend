@@ -7,7 +7,7 @@ export default function CreateProjectCard({ onCreate }: CreateProjectCardProps) 
         <button
             onClick={onCreate}
             id="create-project-card"
-            className="flex flex-col items-center justify-center gap-4 text-center transition-all duration-200 group cursor-pointer rounded-lg"
+            className="flex flex-col items-center justify-center gap-4 text-center transition-all duration-200 group cursor-pointer rounded-sm"
             style={{
                 border: "2px dashed var(--color-outline-variant)",
                 minHeight: 240,

@@ -13,24 +13,27 @@ export default function QueueHeader({
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
                 <h2
-                    className="text-[24px] font-medium"
-                    style={{ color: "#151c27", letterSpacing: "-0.01em" }}
+                    className="text-[24px] font-semibold"
+                    style={{
+                        color: "var(--color-on-surface)",
+                        letterSpacing: "-0.01em",
+                    }}
                 >
                     {queueName || "Queue"}
                 </h2>
                 <span
-                    className="flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-medium"
+                    className="flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase"
                     style={{
                         borderRadius: 9999,
-                        background: "rgba(0,40,194,0.08)",
-                        color: "#0028c2",
-                        border: "0.5px solid rgba(0,40,194,0.25)",
-                        letterSpacing: "0.02em",
+                        background: "rgba(183,196,255,0.1)",
+                        color: "var(--color-primary)",
+                        border: "1px solid rgba(183,196,255,0.25)",
+                        letterSpacing: "0.05em",
                     }}
                 >
                     <span
-                        className="w-1.5 h-1.5 rounded-full"
-                        style={{ background: "#0028c2" }}
+                        className="w-1.5 h-1.5 rounded-full animate-pulse"
+                        style={{ background: "var(--color-primary)" }}
                     />
                     Live
                 </span>
@@ -39,10 +42,11 @@ export default function QueueHeader({
             <div className="flex items-center gap-2">
                 <button
                     onClick={onViewAllJobs}
-                    className="px-4 py-2 text-[13px] font-medium text-white"
+                    className="px-4 py-1.5 text-[13px] font-semibold transition-opacity hover:opacity-90"
                     style={{
-                        background: "#0028c2",
-                        borderRadius: 4,
+                        background: "var(--color-primary)",
+                        color: "var(--color-on-primary)",
+                        borderRadius: 2,
                         letterSpacing: "0.02em",
                     }}
                 >
@@ -51,14 +55,21 @@ export default function QueueHeader({
                 {HEADER_ACTIONS.map((label) => (
                     <button
                         key={label}
-                        className="px-4 py-2 text-[13px] font-medium"
+                        className="px-3 py-1.5 text-[13px] font-medium transition-colors"
                         style={{
-                            background: "#fff",
-                            color: "#151c27",
-                            border: "0.5px solid #c4c5da",
-                            borderRadius: 4,
+                            background: "transparent",
+                            color: "var(--color-on-surface)",
+                            border: "1px solid var(--color-outline)",
+                            borderRadius: 2,
                             letterSpacing: "0.02em",
                         }}
+                        onMouseEnter={(e) =>
+                            (e.currentTarget.style.background =
+                                "var(--color-surface-container-low)")
+                        }
+                        onMouseLeave={(e) =>
+                            (e.currentTarget.style.background = "transparent")
+                        }
                     >
                         {label}
                     </button>

@@ -22,7 +22,7 @@ export default function InfraGraph() {
 
             {/* Graph container */}
             <div
-                className="relative flex justify-center overflow-hidden rounded-lg"
+                className="relative flex justify-center overflow-hidden rounded-sm"
                 style={{
                     padding: "48px",
                     backgroundColor: "var(--color-surface-container-low)",
@@ -50,7 +50,7 @@ export default function InfraGraph() {
                 >
                     {/* Hub node */}
                     <div
-                        className="px-4 py-2 rounded-lg font-medium"
+                        className="px-4 py-2 rounded-sm font-medium"
                         style={{
                             border: "1px solid var(--color-outline)",
                             backgroundColor: "var(--color-surface-container-high)",
@@ -91,7 +91,7 @@ export default function InfraGraph() {
                                 }}
                             />
                             <div
-                                className="px-3 py-1 rounded-lg"
+                                className="px-3 py-1 rounded-sm"
                                 style={{
                                     border: "1px solid var(--color-outline)",
                                     backgroundColor: "var(--color-surface-container-high)",
@@ -122,7 +122,7 @@ export default function InfraGraph() {
                                 }}
                             />
                             <div
-                                className="px-3 py-1 rounded-lg"
+                                className="px-3 py-1 rounded-sm"
                                 style={{
                                     border: "1px solid var(--color-outline)",
                                     backgroundColor: "var(--color-surface-container-high)",

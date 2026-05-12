@@ -6,28 +6,37 @@ interface Segment {
 
 export default function StatusDistribution() {
     const segments: Segment[] = [
-        { label: "Success", pct: 80.2, color: "#0028c2" },
-        { label: "Failed", pct: 14.8, color: "#ba1a1a" },
-        { label: "Waiting", pct: 5.0, color: "#747689" },
+        { label: "Success", pct: 80.2, color: "var(--color-primary)" },
+        { label: "Failed",  pct: 14.8, color: "var(--color-error)" },
+        { label: "Waiting", pct: 5.0,  color: "var(--color-on-surface-variant)" },
     ];
 
+    // conic-gradient requires resolved colour values — use the same hex
+    // that index.css assigns so the chart renders correctly.
+    const resolvedColors = ["#b7c4ff", "#ffb4ab", "#c4c5d7"];
     let acc = 0;
     const stops = segments
-        .map(({ color, pct }) => {
+        .map(({ pct }, i) => {
             const from = acc;
             acc += pct;
-            return `${color} ${from}% ${acc}%`;
+            return `${resolvedColors[i]} ${from}% ${acc}%`;
         })
         .join(", ");
 
     return (
         <div
-            className="w-72 shrink-0 bg-white p-6 flex flex-col"
-            style={{ border: "0.5px solid #c4c5da" }}
+            className="w-72 shrink-0 p-6 flex flex-col"
+            style={{
+                background: "var(--color-surface-container)",
+                border: "1px solid var(--color-outline-variant)",
+            }}
         >
             <h3
-                className="text-[20px] font-medium mb-5"
-                style={{ color: "#151c27", letterSpacing: "-0.01em" }}
+                className="text-[20px] font-semibold mb-5"
+                style={{
+                    color: "var(--color-on-surface)",
+                    letterSpacing: "-0.01em",
+                }}
             >
                 Status Distribution
             </h3>
@@ -46,23 +55,28 @@ export default function StatusDistribution() {
                             background: `conic-gradient(${stops})`,
                         }}
                     />
+                    {/* Hole — must match card background */}
                     <div
-                        className="absolute flex flex-col items-center justify-center bg-white rounded-full"
-                        style={{ width: 108, height: 108 }}
+                        className="absolute flex flex-col items-center justify-center rounded-full"
+                        style={{
+                            width: 108,
+                            height: 108,
+                            background: "var(--color-surface-container)",
+                        }}
                     >
                         <span
-                            className="text-[22px] font-medium"
+                            className="text-[22px] font-semibold"
                             style={{
-                                color: "#151c27",
+                                color: "var(--color-on-surface)",
                                 letterSpacing: "-0.01em",
                             }}
                         >
                             92%
                         </span>
                         <span
-                            className="text-[10px] font-medium uppercase"
+                            className="text-[10px] font-bold uppercase"
                             style={{
-                                color: "#444657",
+                                color: "var(--color-on-surface-variant)",
                                 letterSpacing: "0.05em",
                             }}
                         >
@@ -85,14 +99,14 @@ export default function StatusDistribution() {
                                 />
                                 <span
                                     className="text-[12px]"
-                                    style={{ color: "#151c27" }}
+                                    style={{ color: "var(--color-on-surface)" }}
                                 >
                                     {label}
                                 </span>
                             </div>
                             <span
                                 className="text-[12px] font-medium"
-                                style={{ color: "#151c27" }}
+                                style={{ color: "var(--color-on-surface)" }}
                             >
                                 {pct}%
                             </span>

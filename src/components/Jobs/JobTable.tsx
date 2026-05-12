@@ -9,19 +9,31 @@ export const JobsTable = ({
     onJobClick: (jobId: string) => void;
 }) => {
     return (
-        <div className="border border-gray-200 rounded overflow-hidden">
+        <div
+            className="rounded overflow-hidden"
+            style={{ border: "1px solid var(--color-outline-variant)" }}
+        >
             {/* scroll container */}
-            <div className="max-h-[calc(100vh-200px)] overflow-y-auto">
+            <div className="max-h-[calc(100vh-220px)] overflow-y-auto">
                 <table className="w-full text-left text-sm">
-                    <thead className="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
-                        <tr className="text-xs text-gray-500 uppercase">
-                            <th className="px-4 py-2">Job ID</th>
-                            <th className="px-4 py-2">Name</th>
-                            <th className="px-4 py-2">Status</th>
-                            <th className="px-4 py-2 text-center">Attempts</th>
-                            <th className="px-4 py-2">Duration</th>
-                            <th className="px-4 py-2">Processed On</th>
-                            <th className="px-4 py-2 text-right">Actions</th>
+                    <thead
+                        className="sticky top-0 z-10"
+                        style={{
+                            background: "var(--color-surface-container-high)",
+                            borderBottom: "1px solid var(--color-outline-variant)",
+                        }}
+                    >
+                        <tr
+                            className="text-xs uppercase tracking-wider"
+                            style={{ color: "var(--color-on-surface-variant)" }}
+                        >
+                            <th className="px-4 py-3 font-medium">Job ID</th>
+                            <th className="px-4 py-3 font-medium">Name</th>
+                            <th className="px-4 py-3 font-medium">Status</th>
+                            <th className="px-4 py-3 font-medium text-center">Attempts</th>
+                            <th className="px-4 py-3 font-medium">Duration</th>
+                            <th className="px-4 py-3 font-medium">Processed On</th>
+                            <th className="px-4 py-3 font-medium text-right">Actions</th>
                         </tr>
                     </thead>
 

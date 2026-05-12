@@ -65,7 +65,7 @@ export default function ProjectCard({ project, onNavigate, onMenuClick }: Projec
         <article
             id={`project-card-${project.id}`}
             onClick={() => onNavigate?.(project.id)}
-            className="flex flex-col overflow-hidden rounded-lg transition-all duration-200 group cursor-pointer"
+            className="flex flex-col overflow-hidden rounded-sm transition-all duration-200 group cursor-pointer"
             style={{
                 backgroundColor: "var(--color-surface-container-low)",
                 border: "1px solid var(--color-outline-variant)",
@@ -88,7 +88,7 @@ export default function ProjectCard({ project, onNavigate, onMenuClick }: Projec
                 {/* Header row */}
                 <div className="flex items-start justify-between mb-4">
                     <div
-                        className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+                        className="w-10 h-10 rounded-sm flex items-center justify-center shrink-0"
                         style={{
                             backgroundColor: "var(--color-primary-container)",
                             boxShadow: "0 2px 6px rgba(0,0,0,0.25)",
@@ -109,7 +109,7 @@ export default function ProjectCard({ project, onNavigate, onMenuClick }: Projec
                             e.stopPropagation();
                             onMenuClick?.(project.id);
                         }}
-                        className="flex items-center justify-center w-7 h-7 rounded-md transition-colors"
+                        className="flex items-center justify-center w-7 h-7 rounded-sm transition-colors"
                         style={{ color: "var(--color-on-surface-variant)" }}
                         aria-label="More options"
                         onMouseEnter={(e) =>

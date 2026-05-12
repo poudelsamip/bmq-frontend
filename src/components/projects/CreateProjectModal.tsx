@@ -33,14 +33,14 @@ export default function CreateProjectModal({
     };
 
     const inputClass =
-        "w-full px-3 py-2 bg-[#f9f9ff] border border-[#c4c5da] rounded-sm text-[14px] text-[#151c27] focus:ring-2 focus:ring-[#0038ff] focus:border-transparent outline-none transition-all";
+        "w-full px-3 py-2 bg-[#f9f9ff] border border-[#c4c5da] rounded-xs text-[14px] text-[#151c27] focus:ring-2 focus:ring-[#0038ff] focus:border-transparent outline-none transition-all";
 
     const labelClass =
         "block text-[14px] font-medium tracking-wide text-[#444657] mb-1.5";
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#151c27]/50 backdrop-blur-xs">
-            <div className="bg-white w-full max-w-md rounded-sm shadow-xl overflow-hidden border border-[#c4c5da] flex flex-col">
+            <div className="bg-white w-full max-w-md rounded-xs shadow-xl overflow-hidden border border-[#c4c5da] flex flex-col">
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-[#c4c5da] flex justify-between items-center">
                     <h2 className="text-[20px] font-medium tracking-tight text-[#0038ff]">
@@ -113,7 +113,7 @@ export default function CreateProjectModal({
                 <div className="px-6 py-4 bg-[#f0f3ff] border-t border-[#c4c5da] flex justify-end gap-3">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-[#444657] text-[14px] font-medium hover:bg-[#dfdfdf] rounded-sm transition-colors"
+                        className="px-4 py-2 text-[#444657] text-[14px] font-medium hover:bg-[#dfdfdf] rounded-xs transition-colors"
                     >
                         Cancel
                     </button>
@@ -122,7 +122,7 @@ export default function CreateProjectModal({
                         disabled={
                             !form.name.trim() || !form.redisConnection.trim()
                         }
-                        className="px-4 py-2 bg-[#0038ff] text-white text-[14px] font-medium rounded-sm hover:opacity-90 transition-all shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="px-4 py-2 bg-[#0038ff] text-white text-[14px] font-medium rounded-xs hover:opacity-90 transition-all shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                         Create Project
                     </button>

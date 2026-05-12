@@ -34,7 +34,7 @@ export default function DashboardHeader({ title, onCreateJob }: DashboardHeaderP
             <div className="flex items-center gap-6">
                 <div className="flex items-center gap-3">
                     <button
-                        className="flex items-center justify-center w-8 h-8 rounded-md transition-colors"
+                        className="flex items-center justify-center w-8 h-8 rounded-sm transition-colors"
                         style={{ color: "var(--color-on-surface-variant)" }}
                         aria-label="Notifications"
                         onMouseEnter={(e) =>
@@ -49,7 +49,7 @@ export default function DashboardHeader({ title, onCreateJob }: DashboardHeaderP
                         </span>
                     </button>
                     <button
-                        className="flex items-center justify-center w-8 h-8 rounded-md transition-colors"
+                        className="flex items-center justify-center w-8 h-8 rounded-sm transition-colors"
                         style={{ color: "var(--color-on-surface-variant)" }}
                         aria-label="Help"
                         onMouseEnter={(e) =>
@@ -67,7 +67,7 @@ export default function DashboardHeader({ title, onCreateJob }: DashboardHeaderP
 
                 <button
                     onClick={onCreateJob}
-                    className="px-6 py-2 rounded-lg text-sm font-medium transition-all active:scale-95"
+                    className="px-6 py-2 rounded-xs text-sm font-medium transition-all active:scale-95"
                     style={{
                         backgroundColor: "var(--color-primary)",
                         color: "var(--color-on-primary)",

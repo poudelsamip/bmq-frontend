@@ -9,7 +9,7 @@ export default function PlanUsageBanner({ used, total, onUpgrade }: PlanUsageBan
 
     return (
         <div
-            className="flex items-center justify-between px-4 py-3 rounded-lg"
+            className="flex items-center justify-between px-4 py-3 rounded-sm"
             style={{
                 backgroundColor: "var(--color-surface-container-low)",
                 border: "1px solid var(--color-outline-variant)",

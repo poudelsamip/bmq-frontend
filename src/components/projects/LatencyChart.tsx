@@ -17,22 +17,34 @@ export default function LatencyChart() {
     const max = Math.max(...BAR_DATA);
 
     return (
-        <div className="bg-white p-6" style={{ border: "0.5px solid #c4c5da" }}>
+        <div
+            className="p-6"
+            style={{
+                background: "var(--color-surface-container)",
+                border: "1px solid var(--color-outline-variant)",
+            }}
+        >
             <div className="flex items-center justify-between mb-6">
                 <h3
-                    className="text-[20px] font-medium"
-                    style={{ color: "#151c27", letterSpacing: "-0.01em" }}
+                    className="text-[20px] font-semibold"
+                    style={{
+                        color: "var(--color-on-surface)",
+                        letterSpacing: "-0.01em",
+                    }}
                 >
                     Latency Analysis
                 </h3>
                 <div className="flex items-center gap-2">
                     <div
-                        className="w-3 h-3 rounded-sm"
-                        style={{ background: "#0028c2" }}
+                        className="w-3 h-3 rounded-xs"
+                        style={{ background: "var(--color-primary)" }}
                     />
                     <span
-                        className="text-[11px] font-medium uppercase"
-                        style={{ color: "#444657", letterSpacing: "0.05em" }}
+                        className="text-[10px] font-bold uppercase"
+                        style={{
+                            color: "var(--color-on-surface-variant)",
+                            letterSpacing: "0.05em",
+                        }}
                     >
                         AVG Processing (ms)
                     </span>
@@ -52,8 +64,8 @@ export default function LatencyChart() {
                                 height: `${heightPct}%`,
                                 background:
                                     isHovered || isSpike
-                                        ? "#0028c2"
-                                        : "rgba(0,40,194,0.18)",
+                                        ? "var(--color-primary)"
+                                        : "rgba(183,196,255,0.2)",
                             }}
                             onMouseEnter={() => setHovered(i)}
                             onMouseLeave={() => setHovered(null)}
@@ -69,7 +81,10 @@ export default function LatencyChart() {
                         key={l}
                         className="text-[11px]"
                         style={{
-                            color: l === "Live" ? "#0028c2" : "#444657",
+                            color:
+                                l === "Live"
+                                    ? "var(--color-primary)"
+                                    : "var(--color-on-surface-variant)",
                             fontWeight: l === "Live" ? 600 : 400,
                         }}
                     >

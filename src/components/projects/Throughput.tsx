@@ -10,19 +10,28 @@ export default function ThroughputChart() {
 
     return (
         <div
-            className="flex-1 bg-white p-6 flex flex-col"
-            style={{ border: "0.5px solid #c4c5da" }}
+            className="flex-1 p-6 flex flex-col"
+            style={{
+                background: "var(--color-surface-container)",
+                border: "1px solid var(--color-outline-variant)",
+            }}
         >
             <div className="flex items-center justify-between mb-5">
                 <h3
-                    className="text-[20px] font-medium"
-                    style={{ color: "#151c27", letterSpacing: "-0.01em" }}
+                    className="text-[20px] font-semibold"
+                    style={{
+                        color: "var(--color-on-surface)",
+                        letterSpacing: "-0.01em",
+                    }}
                 >
                     Throughput (24h)
                 </h3>
                 <span
-                    className="text-[11px] font-medium uppercase"
-                    style={{ color: "#444657", letterSpacing: "0.05em" }}
+                    className="text-[10px] font-bold uppercase"
+                    style={{
+                        color: "var(--color-on-surface-variant)",
+                        letterSpacing: "0.05em",
+                    }}
                 >
                     Jobs processed / Hour
                 </span>
@@ -44,12 +53,12 @@ export default function ThroughputChart() {
                         >
                             <stop
                                 offset="0%"
-                                stopColor="#0028c2"
-                                stopOpacity={0.08}
+                                stopColor="var(--color-primary)"
+                                stopOpacity={0.3}
                             />
                             <stop
                                 offset="100%"
-                                stopColor="#0028c2"
+                                stopColor="var(--color-primary)"
                                 stopOpacity={0}
                             />
                         </linearGradient>
@@ -61,7 +70,7 @@ export default function ThroughputChart() {
                             x2="800"
                             y1={y}
                             y2={y}
-                            stroke="#e2e8f8"
+                            stroke="var(--color-outline-variant)"
                             strokeWidth="1"
                         />
                     ))}
@@ -72,17 +81,17 @@ export default function ThroughputChart() {
                     <path
                         d="M0,200 Q100,160 200,175 T400,80 T600,120 T800,40"
                         fill="none"
-                        stroke="#0028c2"
+                        stroke="var(--color-primary)"
                         strokeWidth="2.5"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                     />
-                    <circle cx="400" cy="80" r="5" fill="#0028c2" />
+                    <circle cx="400" cy="80" r="5" fill="var(--color-primary)" />
                     <circle
                         cx="400"
                         cy="80"
                         r="9"
-                        fill="#0028c2"
+                        fill="var(--color-primary)"
                         fillOpacity={0.15}
                     />
                 </svg>
@@ -92,7 +101,7 @@ export default function ThroughputChart() {
                         <span
                             key={l}
                             className="text-[11px]"
-                            style={{ color: "#444657" }}
+                            style={{ color: "var(--color-on-surface-variant)" }}
                         >
                             {l}
                         </span>

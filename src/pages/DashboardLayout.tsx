@@ -31,7 +31,8 @@ export default function DashboardLayout() {
                     className="flex-1 overflow-y-auto"
                     style={{ marginTop: 64, padding: "24px" }}
                 >
-                    <div style={{ maxWidth: 1440, margin: "0 auto" }}>
+                    {/* <div style={{ maxWidth: 1440, margin: "0 auto" }}> */}
+                    <div>
                         <Outlet />
                     </div>
                 </main>

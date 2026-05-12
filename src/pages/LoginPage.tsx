@@ -10,10 +10,10 @@ import { useAuth } from "../context/AuthContext";
 const API = import.meta.env.VITE_API_URL ?? "http://localhost:3000/api";
 
 export default function LoginPage() {
-    const [email,       setEmail]       = useState("");
-    const [password,    setPassword]    = useState("");
-    const [error,       setError]       = useState<string | null>(null);
-    const [isLoading,   setIsLoading]   = useState(false);
+    const [email,        setEmail]        = useState("");
+    const [password,     setPassword]     = useState("");
+    const [error,        setError]        = useState<string | null>(null);
+    const [isLoading,    setIsLoading]    = useState(false);
     const [pendingEmail, setPendingEmail] = useState<string | null>(null);
 
     const { login } = useAuth();
@@ -66,83 +66,215 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="bg-[#f7f9fb] min-h-screen flex items-start sm:items-center justify-center px-4 py-6 text-[#191c1e]">
-            <main className="w-full max-w-md bg-white border border-[#e0e3e5] rounded p-5 sm:p-7 flex flex-col my-6">
-                <header className="flex flex-col items-center mb-5 text-center">
-                    <div className="flex items-center gap-2 mb-2">
-                        <div className="flex items-center justify-center w-9 h-9 bg-[#4f46e5] rounded">
-                            <Boxes size={20} className="text-[#dad7ff]" />
+        <div
+            className="min-h-screen flex items-start sm:items-center justify-center px-4 py-6"
+            style={{ background: "var(--color-background)", color: "var(--color-on-surface)", fontFamily: "Inter, sans-serif" }}
+        >
+            <main
+                className="w-full max-w-md rounded-md p-6 sm:p-8 flex flex-col my-6"
+                style={{
+                    background: "var(--color-surface-container-low)",
+                    border: "1px solid var(--color-outline-variant)",
+                }}
+            >
+                {/* ── Header ── */}
+                <header className="flex flex-col items-center mb-6 text-center">
+                    <div className="flex items-center gap-2.5 mb-2">
+                        <div
+                            className="flex items-center justify-center w-9 h-9 rounded-sm"
+                            style={{ background: "var(--color-primary-container)" }}
+                        >
+                            <Boxes size={20} style={{ color: "var(--color-on-primary-container)" }} />
                         </div>
-                        <h1 className="text-lg sm:text-xl font-semibold tracking-tight">Bull Vortex</h1>
+                        <h1
+                            className="text-xl font-semibold tracking-tight"
+                            style={{ color: "var(--color-on-surface)", fontFamily: "Manrope, sans-serif" }}
+                        >
+                            Bull Vortex
+                        </h1>
                     </div>
-                    <p className="text-sm text-[#464555]">Welcome back</p>
+                    <p className="text-sm" style={{ color: "var(--color-on-surface-variant)" }}>
+                        Welcome back
+                    </p>
                 </header>
 
                 <div className="flex flex-col gap-4">
+                    {/* ── Error banner ── */}
                     {error && (
-                        <div className="bg-red-50 text-red-600 text-sm p-3 rounded border border-red-100">
+                        <div
+                            className="text-sm p-3 rounded-sm"
+                            style={{
+                                background: "var(--color-error-container)",
+                                color: "var(--color-on-error-container)",
+                                border: "1px solid var(--color-error)",
+                            }}
+                        >
                             {error}
                         </div>
                     )}
 
+                    {/* ── Email ── */}
                     <div className="flex flex-col gap-1.5">
-                        <label htmlFor="email" className="text-sm font-medium">Email address</label>
+                        <label
+                            htmlFor="email"
+                            className="text-sm font-medium"
+                            style={{ color: "var(--color-on-surface-variant)" }}
+                        >
+                            Email address
+                        </label>
                         <div className="relative flex items-center">
-                            <Mail size={18} className="absolute left-2 text-[#464555]" />
+                            <Mail
+                                size={16}
+                                className="absolute left-3"
+                                style={{ color: "var(--color-on-surface-variant)" }}
+                            />
                             <input
-                                id="email" type="email" value={email}
+                                id="email"
+                                type="email"
+                                value={email}
                                 onChange={e => setEmail(e.target.value)}
                                 onKeyDown={onEnter}
                                 placeholder="name@company.com"
                                 autoComplete="email"
-                                className="w-full border border-[#e0e3e5] rounded-sm pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-[#3525cd] focus:ring-2 focus:ring-[#3525cd]/10"
+                                className="w-full pl-9 pr-3 py-2.5 text-sm rounded-sm transition-all duration-150 focus:outline-none"
+                                style={{
+                                    background: "var(--color-surface-container)",
+                                    color: "var(--color-on-surface)",
+                                    border: "1px solid var(--color-outline-variant)",
+                                }}
+                                onFocus={e => {
+                                    e.currentTarget.style.borderColor = "var(--color-primary)";
+                                    e.currentTarget.style.boxShadow = "0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent)";
+                                }}
+                                onBlur={e => {
+                                    e.currentTarget.style.borderColor = "var(--color-outline-variant)";
+                                    e.currentTarget.style.boxShadow = "none";
+                                }}
                             />
                         </div>
                     </div>
 
+                    {/* ── Password ── */}
                     <div className="flex flex-col gap-1.5">
                         <div className="flex justify-between items-center">
-                            <label htmlFor="password" className="text-sm font-medium">Password</label>
-                            <a href="#" className="text-xs text-[#3525cd] hover:text-[#4f46e5]">Forgot password?</a>
+                            <label
+                                htmlFor="password"
+                                className="text-sm font-medium"
+                                style={{ color: "var(--color-on-surface-variant)" }}
+                            >
+                                Password
+                            </label>
+                            <a
+                                href="#"
+                                className="text-xs transition-colors duration-150"
+                                style={{ color: "var(--color-primary)" }}
+                                onMouseOver={e => (e.currentTarget.style.color = "var(--color-primary-fixed)")}
+                                onMouseOut={e => (e.currentTarget.style.color = "var(--color-primary)")}
+                            >
+                                Forgot password?
+                            </a>
                         </div>
                         <div className="relative flex items-center">
-                            <Lock size={18} className="absolute left-2 text-[#464555]" />
+                            <Lock
+                                size={16}
+                                className="absolute left-3"
+                                style={{ color: "var(--color-on-surface-variant)" }}
+                            />
                             <input
-                                id="password" type="password" value={password}
+                                id="password"
+                                type="password"
+                                value={password}
                                 onChange={e => setPassword(e.target.value)}
                                 onKeyDown={onEnter}
                                 placeholder="••••••••"
                                 autoComplete="current-password"
-                                className="w-full border border-[#e0e3e5] rounded-sm pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-[#3525cd] focus:ring-2 focus:ring-[#3525cd]/10"
+                                className="w-full pl-9 pr-3 py-2.5 text-sm rounded-sm transition-all duration-150 focus:outline-none"
+                                style={{
+                                    background: "var(--color-surface-container)",
+                                    color: "var(--color-on-surface)",
+                                    border: "1px solid var(--color-outline-variant)",
+                                }}
+                                onFocus={e => {
+                                    e.currentTarget.style.borderColor = "var(--color-primary)";
+                                    e.currentTarget.style.boxShadow = "0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent)";
+                                }}
+                                onBlur={e => {
+                                    e.currentTarget.style.borderColor = "var(--color-outline-variant)";
+                                    e.currentTarget.style.boxShadow = "none";
+                                }}
                             />
                         </div>
                     </div>
 
-                    <Button fullWidth onClick={handleLogin} className="mt-1" disabled={isLoading}>
+                    {/* ── Primary CTA ── */}
+                    <button
+                        id="login-btn"
+                        onClick={handleLogin}
+                        disabled={isLoading}
+                        className="w-full py-2.5 text-sm font-semibold rounded-sm mt-1 transition-all duration-150 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+                        style={{
+                            background: "var(--color-primary)",
+                            color: "var(--color-on-primary)",
+                        }}
+                        onMouseOver={e => { if (!isLoading) e.currentTarget.style.background = "var(--color-primary-fixed)"; }}
+                        onMouseOut={e => { e.currentTarget.style.background = "var(--color-primary)"; }}
+                    >
                         {isLoading ? "Logging in..." : "Login"}
-                    </Button>
+                    </button>
                 </div>
 
-                <div className="relative flex items-center py-3">
-                    <div className="grow border-t border-[#e0e3e5]" />
-                    <span className="mx-3 text-xs text-[#464555]">or</span>
-                    <div className="grow border-t border-[#e0e3e5]" />
+                {/* ── Divider ── */}
+                <div className="relative flex items-center py-4">
+                    <div className="grow border-t" style={{ borderColor: "var(--color-outline-variant)" }} />
+                    <span className="mx-3 text-xs" style={{ color: "var(--color-on-surface-variant)" }}>or</span>
+                    <div className="grow border-t" style={{ borderColor: "var(--color-outline-variant)" }} />
                 </div>
 
-                <div className="flex flex-col gap-2.5 mb-3">
-                    <Button variant="social" fullWidth
-                        onClick={() => { window.location.href = `${API}/auth/google`; }}>
+                {/* ── Social buttons ── */}
+                <div className="flex flex-col gap-2.5 mb-4">
+                    <button
+                        id="google-login-btn"
+                        onClick={() => { window.location.href = `${API}/auth/google`; }}
+                        className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm font-medium rounded-sm transition-all duration-150 active:scale-[0.98]"
+                        style={{
+                            background: "var(--color-surface-container)",
+                            color: "var(--color-on-surface)",
+                            border: "1px solid var(--color-outline-variant)",
+                        }}
+                        onMouseOver={e => { e.currentTarget.style.background = "var(--color-surface-container-high)"; }}
+                        onMouseOut={e => { e.currentTarget.style.background = "var(--color-surface-container)"; }}
+                    >
                         <GoogleIcon /> Continue with Google
-                    </Button>
-                    <Button variant="social" fullWidth
-                        onClick={() => { window.location.href = `${API}/auth/github`; }}>
-                        <GitHubIcon /> Continue with GitHub
-                    </Button>
+                    </button>
+                    <button
+                        id="github-login-btn"
+                        onClick={() => { window.location.href = `${API}/auth/github`; }}
+                        className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm font-medium rounded-sm transition-all duration-150 active:scale-[0.98]"
+                        style={{
+                            background: "var(--color-surface-container)",
+                            color: "var(--color-on-surface)",
+                            border: "1px solid var(--color-outline-variant)",
+                        }}
+                        onMouseOver={e => { e.currentTarget.style.background = "var(--color-surface-container-high)"; }}
+                        onMouseOut={e => { e.currentTarget.style.background = "var(--color-surface-container)"; }}
+                    >
+                        <div className="bg-white rounded-full">
+                            <GitHubIcon /> 
+                        </div>
+                        Continue with GitHub
+                    </button>
                 </div>
 
-                <p className="text-center text-xs text-[#464555]">
+                {/* ── Footer ── */}
+                <p className="text-center text-xs" style={{ color: "var(--color-on-surface-variant)" }}>
                     Don't have an account?{" "}
-                    <Link to="/signup" className="text-[#3525cd] font-medium hover:text-[#4f46e5]">Sign up</Link>
+                    <Link
+                        to="/signup"
+                        className="font-medium transition-colors duration-150"
+                        style={{ color: "var(--color-primary)" }}
+                    >
+                        Sign up
+                    </Link>
                 </p>
             </main>
         </div>

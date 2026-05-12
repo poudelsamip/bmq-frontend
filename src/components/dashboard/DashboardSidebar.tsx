@@ -27,7 +27,7 @@ export default function DashboardSidebar() {
             <div className="px-4 mb-8">
                 <div className="flex items-center gap-3">
                     <div
-                        className="w-8 h-8 rounded-sm flex items-center justify-center shrink-0"
+                        className="w-8 h-8 rounded-xs flex items-center justify-center shrink-0"
                         style={{ backgroundColor: "var(--color-primary-container)" }}
                     >
                         <span

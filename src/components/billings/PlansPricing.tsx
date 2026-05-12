@@ -56,7 +56,7 @@ export default function PlansPricing() {
             {plans.map((plan, i) => (
                 <div
                     key={i}
-                    className="relative flex flex-col rounded-xl transition-colors"
+                    className="relative flex flex-col rounded-sm transition-colors"
                     style={{
                         backgroundColor: "var(--color-surface-container)",
                         border: plan.highlight
@@ -195,7 +195,7 @@ export default function PlansPricing() {
                     {/* CTA button */}
                     <button
                         disabled={plan.disabled}
-                        className="w-full rounded-xl transition-all active:scale-[0.98]"
+                        className="w-full rounded-sm transition-all active:scale-[0.98]"
                         style={
                             plan.disabled
                                 ? {

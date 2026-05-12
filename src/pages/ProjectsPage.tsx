@@ -57,7 +57,7 @@ export default function ProjectsPage() {
     }, []);
 
     return (
-        <div className="flex flex-col" style={{ gap: 24 }}>
+        <div className="flex flex-col" style={{ maxWidth: "1440px", margin:"0 auto", gap: 24 }}>
             {/* Plan usage slim bar */}
             <PlanUsageBanner
                 used={projects.length}

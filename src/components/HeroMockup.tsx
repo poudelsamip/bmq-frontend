@@ -12,7 +12,7 @@ const bars = [
 
 export default function HeroMockup() {
     return (
-        <div className="relative z-10 w-full h-100 lg:h-150 rounded-xl border border-[#e0e3e5] bg-white shadow-sm overflow-hidden flex flex-col">
+        <div className="relative z-10 w-full h-100 lg:h-150 rounded-sm border border-[#e0e3e5] bg-white shadow-sm overflow-hidden flex flex-col">
             {/* Window Chrome */}
             <div className="h-12 border-b border-[#e0e3e5] bg-[#f2f4f6] flex items-center px-4 gap-2">
                 <div className="flex gap-1.5">

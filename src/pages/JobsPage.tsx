@@ -2,9 +2,10 @@ import JobsHeader from "../components/Jobs/JobsHeader";
 import { JobsTable } from "../components/Jobs/JobTable";
 import { queueApi, type Job } from "../api/queue.api";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import JobDrawer from "../components/Jobs/JobDrawer";
+import { ChevronRight } from "lucide-react";
 
 export default function JobsPage() {
     const { id, queueName } = useParams();
@@ -16,6 +17,8 @@ export default function JobsPage() {
         setSelectedJobId(jobId);
         setShowDrawer(true);
     };
+
+    const navigate= useNavigate();
 
     const {
         data: jobs,
@@ -32,15 +35,34 @@ export default function JobsPage() {
     });
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return (
+            <div
+                className="flex items-center justify-center h-screen text-sm"
+                style={{ background: "var(--color-background)", color: "var(--color-on-surface-variant)" }}
+            >
+                Loading jobs…
+            </div>
+        );
     }
 
     if (isError) {
-        return <div>Error occurred while fetching jobs.</div>;
+        return (
+            <div
+                className="flex flex-col items-center justify-center h-screen gap-3"
+                style={{ background: "var(--color-background)" }}
+            >
+                <p className="text-base font-semibold" style={{ color: "var(--color-error)" }}>
+                    Error occurred while fetching jobs.
+                </p>
+            </div>
+        );
     }
 
     return (
-        <main className="relative p-6 h-[calc(100vh-64px)] bg-white -m-6">
+        <main
+            className="relative p-6 h-[calc(100vh-64px)] -m-6"
+            style={{ background: "var(--color-background)" }}
+        >
             {showDrawer && (
                 <JobDrawer
                     jobId={selectedJobId}
@@ -48,10 +70,15 @@ export default function JobsPage() {
                 />
             )}
             <>
-                <div>
-                    <p className="uppercase tracking-wide font-bold text-xl mb-2">
-                        queue: {queueName}
-                    </p>
+                <div className="flex items-center gap-2 mb-4">
+                    <button onClick={() => navigate(-1)} className="underline text-xs font-medium uppercase tracking-wider underline-offset-2" style={{ color: "var(--color-primary)" }}>All Queues</button>
+                    <ChevronRight size={16} style={{ color: "var(--color-on-surface)" }} />
+                    <h1
+                        className="text-2xl font-bold uppercase tracking-wider"
+                        style={{ color: "var(--color-on-surface)", fontFamily: "Manrope, sans-serif" }}
+                    >
+                        {queueName}
+                    </h1>
                 </div>
                 <JobsHeader />
                 <JobsTable jobs={jobs || []} onJobClick={onJobClick} />

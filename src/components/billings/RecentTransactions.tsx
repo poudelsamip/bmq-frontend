@@ -19,7 +19,7 @@ export default function RecentTransactions() {
             </h3>
 
             <div
-                className="overflow-hidden rounded-xl"
+                className="overflow-hidden rounded-sm"
                 style={{
                     backgroundColor: "var(--color-surface-container)",
                     border: "1px solid var(--color-outline-variant)",

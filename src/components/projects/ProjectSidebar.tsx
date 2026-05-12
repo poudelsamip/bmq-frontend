@@ -24,23 +24,26 @@ export default function ProjectSidebar({
 
     return (
         <aside
-            className="w-56 shrink-0 flex flex-col pt-4 pb-6"
+            className="w-64 shrink-0 flex flex-col pt-4 pb-6"
             style={{
-                background: "#f0f3ff",
-                borderRight: "0.5px solid #c4c5da",
+                background: "var(--color-surface-container-lowest)",
+                borderRight: "1px solid var(--color-outline-variant)",
                 minHeight: "100vh",
             }}
         >
+            <div className="flex w-full justify-between mb-5">
+
+            
             {/* Back link */}
             <button
                 onClick={handleBack}
-                className="flex items-center gap-1 px-4 mb-2 text-[12px] font-medium underline w-fit"
-                style={{ color: "#0028c2" }}
+                className="flex items-center text-[12px] font-medium underline w-fit"
+                style={{ color: "var(--color-primary)" }}
             >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path
                         d="M10 12L6 8l4-4"
-                        stroke="#0028c2"
+                        stroke="var(--color-primary)"
                         strokeWidth="1.5"
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -49,16 +52,18 @@ export default function ProjectSidebar({
                 ALL PROJECTS
             </button>
 
-            {/* Section label */}
             <p
-                className="px-4 mb-2 text-[16px] font-medium uppercase"
-                style={{ color: "#444657", letterSpacing: "0.08em" }}
+                className="text-[12px] font-bold uppercase mr-3"
+                style={{
+                    color: "var(--color-on-surface-variant)",
+                    letterSpacing: "0.08em",
+                }}
             >
                 {projectName}
             </p>
+            </div>
 
             {/* Queue list */}
-
             <div className="flex flex-col gap-1 px-2">
                 {queues.map((q: string) => {
                     const isSelected = selectedQeueue === q;
@@ -68,35 +73,37 @@ export default function ProjectSidebar({
                             key={q}
                             onClick={() => onQueueSelect(q)}
                             className={cn(
-                                // Base Styles
-                                "group w-full text-left px-3 py-2.5 flex items-center justify-between gap-2",
-                                "rounded-sm border-[0.5px] transition-all duration-150",
-
-                                // Selection Logic + Hover States
-                                isSelected
-                                    ? "bg-[#dce2f3] border-blue-500 hover:bg-[#d1d8ed]"
-                                    : "bg-slate-200 border-transparent hover:bg-slate-200 hover:border-blue-400",
+                                "group w-full text-left px-3 py-3 flex items-center justify-between gap-2",
+                                "rounded-xs border transition-all duration-150",
                             )}
+                            style={{
+                                background: isSelected
+                                    ? "rgba(183,196,255,0.2)"
+                                    : "var(--color-surface-container)",
+                                borderColor: isSelected
+                                    ? "rgba(183,196,255,0.3)"
+                                    : "transparent",
+                            }}
                         >
                             <span
-                                className={cn(
-                                    "text-[16px] truncate font-inter",
-                                    isSelected
-                                        ? "text-[#0028c2]"
-                                        : "text-[#151c27]",
-                                )}
+                                className="text-[16px] truncate font-inter"
+                                style={{
+                                    color: isSelected
+                                        ? "var(--color-primary)"
+                                        : "var(--color-on-surface)",
+                                }}
                             >
                                 {q}
                             </span>
 
-                            {/* The Dot Indicator */}
+                            {/* Dot indicator */}
                             <span
-                                className={cn(
-                                    "w-2 h-2 rounded-full shrink-0 transition-colors duration-150",
-                                    isSelected
-                                        ? "bg-[#0028c2]"
-                                        : "bg-[#c4c5da] group-hover:bg-slate-500",
-                                )}
+                                className="w-2 h-2 rounded-full shrink-0 transition-colors duration-150"
+                                style={{
+                                    background: isSelected
+                                        ? "var(--color-primary)"
+                                        : "var(--color-outline-variant)",
+                                }}
                             />
                         </button>
                     );

@@ -81,17 +81,33 @@ export default function ProjectDetailsPage() {
 
     console.log("Project response:", projectResponse);
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return (
+        <div
+            className="flex items-center justify-center h-screen text-[16px]"
+            style={{ background: "var(--color-background)", color: "var(--color-on-surface-variant)" }}
+        >
+            Loading…
+        </div>
+    );
     if (isError) {
         return (
-            <div className="flex flex-col items-center h-screen">
-                <h1 className="text-2xl font-semibold text-red-600">
+            <div
+                className="flex flex-col items-center justify-center h-screen gap-3"
+                style={{ background: "var(--color-background)" }}
+            >
+                <h1
+                    className="text-2xl font-semibold"
+                    style={{ color: "var(--color-error)" }}
+                >
                     {error?.message || "Error loading project"}
                 </h1>
-                <p>Please make sure your redis connection is active.</p>
+                <p style={{ color: "var(--color-on-surface-variant)" }}>
+                    Please make sure your Redis connection is active.
+                </p>
                 <button
                     onClick={() => navigate("/dashboard")}
-                    className="mt-4 text-blue-500 underline"
+                    className="mt-2 underline"
+                    style={{ color: "var(--color-primary)" }}
                 >
                     Back to Dashboard
                 </button>
@@ -103,7 +119,7 @@ export default function ProjectDetailsPage() {
         <div
             className="flex min-h-screen"
             style={{
-                background: "#f9f9ff",
+                background: "var(--color-background)",
                 fontFamily: "Inter, sans-serif",
                 margin: "-24px", // offset padding for full-width sidebar
             }}
