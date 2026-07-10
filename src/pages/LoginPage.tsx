@@ -2,12 +2,9 @@ import { useState, type KeyboardEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Boxes, Mail, Lock } from "lucide-react";
 import { GoogleIcon, GitHubIcon } from "../components/SocialIcons";
-import Button from "../components/ui/Button";
 import EmailVerification from "../components/EmailVerification";
 import { authApi } from "../api/auth.api";
 import { useAuth } from "../context/AuthContext";
-
-const API = import.meta.env.VITE_API_URL ?? "http://localhost:3000/api";
 
 export default function LoginPage() {
     const [email,        setEmail]        = useState("");
@@ -234,7 +231,7 @@ export default function LoginPage() {
                 <div className="flex flex-col gap-2.5 mb-4">
                     <button
                         id="google-login-btn"
-                        onClick={() => { window.location.href = `${API}/auth/google`; }}
+                        onClick={() => { window.location.href = "http://localhost:3000/api/auth/google"; }}
                         className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm font-medium rounded-sm transition-all duration-150 active:scale-[0.98]"
                         style={{
                             background: "var(--color-surface-container)",
@@ -248,7 +245,7 @@ export default function LoginPage() {
                     </button>
                     <button
                         id="github-login-btn"
-                        onClick={() => { window.location.href = `${API}/auth/github`; }}
+                        onClick={() => { window.location.href = "http://localhost:3000/api/auth/github"; }}
                         className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm font-medium rounded-sm transition-all duration-150 active:scale-[0.98]"
                         style={{
                             background: "var(--color-surface-container)",

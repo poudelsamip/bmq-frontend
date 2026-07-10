@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { queueApi, type JobDetails } from "../../api/queue.api";
 import { X } from "lucide-react";
+import { getStateBadgeStyle } from "../ui/StatusBadge";
 
 export default function JobDrawer({
     jobId,
@@ -25,6 +27,26 @@ export default function JobDrawer({
         enabled: !!id && !!queueName && !!jobId,
     });
 
+    const queryClient = useQueryClient();
+    const [retrying, setRetrying] = useState(false);
+
+    const retryHandler = async () => {
+        if (!id || !queueName || !jobId) return;
+        setRetrying(true);
+        try {
+            await queueApi.retryJob(id, queueName, jobId);
+            // Refresh the drawer data and the jobs list
+            await queryClient.invalidateQueries({ queryKey: ["jobDetails", id, queueName, jobId] });
+            await queryClient.invalidateQueries({ queryKey: ["jobs", id, queueName] });
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setRetrying(false);
+        }
+    };
+
+    const handleFlowTreeClick = async () => {};
+
     if (!jobId) return null;
 
     return (
@@ -38,12 +60,17 @@ export default function JobDrawer({
             {/* HEADER */}
             <div
                 className="px-5 py-4 flex justify-between items-start"
-                style={{ borderBottom: "1px solid var(--color-outline-variant)" }}
+                style={{
+                    borderBottom: "1px solid var(--color-outline-variant)",
+                }}
             >
                 <div>
                     <h2
                         className="text-base font-semibold"
-                        style={{ color: "var(--color-on-surface)", fontFamily: "Manrope, sans-serif" }}
+                        style={{
+                            color: "var(--color-on-surface)",
+                            fontFamily: "Manrope, sans-serif",
+                        }}
                     >
                         {job?.name || "Loading..."}
                     </h2>
@@ -57,10 +84,7 @@ export default function JobDrawer({
                     {job && (
                         <span
                             className="mt-2 inline-flex items-center gap-1 px-2 py-0.5 text-[10px] rounded"
-                            style={{
-                                border: "1px solid var(--color-error)",
-                                color: "var(--color-error)",
-                            }}
+                            style={getStateBadgeStyle(job.state)}
                         >
                             ● {job.state.toUpperCase()}
                         </span>
@@ -72,10 +96,12 @@ export default function JobDrawer({
                     className="transition-colors"
                     style={{ color: "var(--color-on-surface-variant)" }}
                     onMouseEnter={(e) =>
-                        (e.currentTarget.style.color = "var(--color-on-surface)")
+                        (e.currentTarget.style.color =
+                            "var(--color-on-surface)")
                     }
                     onMouseLeave={(e) =>
-                        (e.currentTarget.style.color = "var(--color-on-surface-variant)")
+                        (e.currentTarget.style.color =
+                            "var(--color-on-surface-variant)")
                     }
                 >
                     <X size={22} className="cursor-pointer" />
@@ -102,7 +128,9 @@ export default function JobDrawer({
                             <div>
                                 <p
                                     className="text-xs mb-1"
-                                    style={{ color: "var(--color-on-surface-variant)" }}
+                                    style={{
+                                        color: "var(--color-on-surface-variant)",
+                                    }}
                                 >
                                     Queue
                                 </p>
@@ -114,7 +142,9 @@ export default function JobDrawer({
                             <div>
                                 <p
                                     className="text-xs mb-1"
-                                    style={{ color: "var(--color-on-surface-variant)" }}
+                                    style={{
+                                        color: "var(--color-on-surface-variant)",
+                                    }}
                                 >
                                     Attempts
                                 </p>
@@ -126,7 +156,9 @@ export default function JobDrawer({
                             <div>
                                 <p
                                     className="text-xs mb-1"
-                                    style={{ color: "var(--color-on-surface-variant)" }}
+                                    style={{
+                                        color: "var(--color-on-surface-variant)",
+                                    }}
                                 >
                                     Duration
                                 </p>
@@ -138,7 +170,9 @@ export default function JobDrawer({
                             <div>
                                 <p
                                     className="text-xs mb-1"
-                                    style={{ color: "var(--color-on-surface-variant)" }}
+                                    style={{
+                                        color: "var(--color-on-surface-variant)",
+                                    }}
                                 >
                                     Created
                                 </p>
@@ -154,8 +188,10 @@ export default function JobDrawer({
                                 <div
                                     className="p-3 font-mono text-xs rounded"
                                     style={{
-                                        background: "var(--color-error-container)",
-                                        borderLeft: "3px solid var(--color-error)",
+                                        background:
+                                            "var(--color-error-container)",
+                                        borderLeft:
+                                            "3px solid var(--color-error)",
                                         color: "var(--color-on-error-container)",
                                     }}
                                 >
@@ -169,7 +205,8 @@ export default function JobDrawer({
                             <pre
                                 className="rounded p-4 overflow-x-auto text-xs tracking-wide leading-relaxed"
                                 style={{
-                                    background: "var(--color-surface-container-lowest)",
+                                    background:
+                                        "var(--color-surface-container-lowest)",
                                     border: "1px solid var(--color-outline-variant)",
                                     fontFamily: "JetBrains Mono, monospace",
                                 }}
@@ -178,7 +215,11 @@ export default function JobDrawer({
                                     className="font-mono"
                                     style={{ color: "var(--color-on-surface)" }}
                                     dangerouslySetInnerHTML={{
-                                        __html: JSON.stringify(job.payload, null, 2)
+                                        __html: JSON.stringify(
+                                            job.payload,
+                                            null,
+                                            2,
+                                        )
                                             // keys
                                             .replace(/"(.*?)":/g, `"§$1§":`)
                                             .replace(
@@ -204,7 +245,9 @@ export default function JobDrawer({
                         <Section title="Runtime Logs">
                             <div
                                 className="rounded overflow-hidden font-mono text-xs"
-                                style={{ border: "1px solid var(--color-outline-variant)" }}
+                                style={{
+                                    border: "1px solid var(--color-outline-variant)",
+                                }}
                             >
                                 {job.logs.map((log, i) => {
                                     const [time, ...rest] = log.split(" ");
@@ -221,13 +264,17 @@ export default function JobDrawer({
                                         >
                                             <span
                                                 className="w-20 shrink-0"
-                                                style={{ color: "var(--color-on-surface-variant)" }}
+                                                style={{
+                                                    color: "var(--color-on-surface-variant)",
+                                                }}
                                             >
                                                 {time?.replace(/[\[\]]/g, "")}
                                             </span>
                                             <span
                                                 className="break-all"
-                                                style={{ color: "var(--color-on-surface)" }}
+                                                style={{
+                                                    color: "var(--color-on-surface)",
+                                                }}
                                             >
                                                 {rest.join(" ")}
                                             </span>
@@ -246,13 +293,26 @@ export default function JobDrawer({
                 style={{ borderTop: "1px solid var(--color-outline-variant)" }}
             >
                 <button
-                    className="flex-1 py-2 rounded text-sm font-medium transition-opacity hover:opacity-80"
-                    style={{
-                        border: "1px solid var(--color-error)",
-                        color: "var(--color-error)",
-                    }}
+                    className="flex-1 py-2 rounded text-sm font-medium transition-opacity"
+                    style={
+                        job?.state?.toLowerCase() === "failed" && !retrying
+                            ? {
+                                  border: "1px solid var(--color-error)",
+                                  color: "var(--color-error)",
+                                  cursor: "pointer",
+                                  opacity: 1,
+                              }
+                            : {
+                                  border: "1px solid var(--color-outline-variant)",
+                                  color: "var(--color-on-surface-variant)",
+                                  cursor: "not-allowed",
+                                  opacity: 0.45,
+                              }
+                    }
+                    onClick={retryHandler}
+                    disabled={job?.state?.toLowerCase() !== "failed" || retrying}
                 >
-                    Retry
+                    {retrying ? "Retrying…" : "Retry"}
                 </button>
                 <button
                     className="flex-1 py-2 rounded text-sm font-medium transition-opacity hover:opacity-80"
@@ -260,6 +320,7 @@ export default function JobDrawer({
                         background: "var(--color-primary-container)",
                         color: "white",
                     }}
+                    onClick={handleFlowTreeClick}
                 >
                     Flow Tree
                 </button>

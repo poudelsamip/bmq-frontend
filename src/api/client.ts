@@ -1,6 +1,6 @@
 import axios, { type InternalAxiosRequestConfig } from "axios";
 
-const BASE = import.meta.env.VITE_API_URL ?? "http://localhost:3000/api";
+const BASE = "http://localhost:3000/api";
 
 // Token store
 let _token: string | null = null;

@@ -13,6 +13,7 @@ export default function ProjectDetailsPage() {
 
     const [selectedQueue, setSelectedQueue] = useState<string | null>(null);
     const [queueStats, setQueueStats] = useState<QueueStats | null>(null);
+    const [isLoadingStats, setIsLoadingStats] = useState(false);
 
     const {
         data: projectResponse,
@@ -33,6 +34,8 @@ export default function ProjectDetailsPage() {
 
     const handleQueueSelect = async (queueName: string) => {
         setSelectedQueue(queueName);
+        setQueueStats(null);       // clear stale stats from previous queue
+        setIsLoadingStats(true);   // show skeleton until first SSE message
     };
 
     if (!id) {
@@ -56,6 +59,7 @@ export default function ProjectDetailsPage() {
         source.onmessage = (event) => {
             const data = JSON.parse(event.data) as QueueStats;
             setQueueStats(data);
+            setIsLoadingStats(false); // skeleton done — real data arrived
             console.log("Received queue stats update:", data);
         };
 
@@ -75,20 +79,12 @@ export default function ProjectDetailsPage() {
 
         return () => {
             source.close();
-            setSelectedQueue(null);
         };
     }, [selectedQueue, id]);
 
     console.log("Project response:", projectResponse);
 
-    if (isLoading) return (
-        <div
-            className="flex items-center justify-center h-screen text-[16px]"
-            style={{ background: "var(--color-background)", color: "var(--color-on-surface-variant)" }}
-        >
-            Loading…
-        </div>
-    );
+
     if (isError) {
         return (
             <div
@@ -117,11 +113,13 @@ export default function ProjectDetailsPage() {
 
     return (
         <div
-            className="flex min-h-screen"
+            className="flex"
             style={{
                 background: "var(--color-background)",
                 fontFamily: "Inter, sans-serif",
                 margin: "-24px", // offset padding for full-width sidebar
+                height: "calc(100vh - 64px)", // fill exactly the main area below the header
+                overflow: "hidden", // prevent this wrapper from scrolling
             }}
         >
             <ProjectSidebar
@@ -133,6 +131,7 @@ export default function ProjectDetailsPage() {
             <QueueData
                 selectedQueue={selectedQueue}
                 queueStats={queueStats?.counts || null}
+                isLoading={isLoading || isLoadingStats}
             />
         </div>
     );

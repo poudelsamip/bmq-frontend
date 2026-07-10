@@ -28,7 +28,7 @@ export default function ProjectSidebar({
             style={{
                 background: "var(--color-surface-container-lowest)",
                 borderRight: "1px solid var(--color-outline-variant)",
-                minHeight: "100vh",
+                height: "100%",
             }}
         >
             <div className="flex w-full justify-between mb-5">
@@ -64,7 +64,7 @@ export default function ProjectSidebar({
             </div>
 
             {/* Queue list */}
-            <div className="flex flex-col gap-1 px-2">
+            <div className="flex flex-col gap-1 px-2" style={{ overflowY: "auto", flex: 1 }}>
                 {queues.map((q: string) => {
                     const isSelected = selectedQeueue === q;
 

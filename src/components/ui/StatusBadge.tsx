@@ -1,49 +1,31 @@
 import type { JobStatus } from "../../api/queue.api";
 
-const getStyles = (status: JobStatus) => {
-    switch (status) {
-        case "active":
-            return {
-                container: "bg-blue-50 text-blue-700",
-                dot: "bg-blue-600 animate-pulse",
-            };
+export function getStateBadgeStyle(state: string): React.CSSProperties {
+    switch (state?.toLowerCase()) {
         case "completed":
-            return {
-                container: "bg-gray-200 text-gray-700",
-                dot: "bg-gray-500",
-            };
+            return { border: "1px solid rgba(34, 197, 94, 0.3)", backgroundColor: "rgba(34, 197, 94, 0.1)", color: "#22c55e" };
         case "failed":
-            return {
-                container: "bg-red-50 text-red-600",
-                dot: "bg-red-600",
-            };
-        case "waiting":
-            return {
-                container: "bg-gray-100 text-gray-600",
-                dot: "bg-gray-400",
-            };
+            return { border: "1px solid rgba(239, 68, 68, 0.3)", backgroundColor: "rgba(239, 68, 68, 0.1)", color: "var(--color-error)" };
+        case "active":
+            return { border: "1px solid rgba(96, 165, 250, 0.3)", backgroundColor: "rgba(96, 165, 250, 0.1)", color: "#60a5fa" };
         case "delayed":
-            return {
-                container: "bg-orange-100 text-orange-700",
-                dot: "bg-orange-600",
-            };
+        case "waiting":
+        case "waiting-children":
+            return { border: "1px solid rgba(250, 204, 21, 0.3)", backgroundColor: "rgba(250, 204, 21, 0.1)", color: "#facc15" };
+        case "paused":
+            return { border: "1px solid rgba(167, 139, 250, 0.3)", backgroundColor: "rgba(167, 139, 250, 0.1)", color: "#a78bfa" };
         default:
-            return {
-                container: "bg-gray-100 text-gray-600",
-                dot: "bg-gray-400",
-            };
+            return { border: "1px solid var(--color-outline-variant)", backgroundColor: "transparent", color: "var(--color-on-surface-variant)" };
     }
-};
+}
 
 export default function StatusBadge({ status }: { status: JobStatus }) {
-    const styles = getStyles(status);
-
     return (
         <span
-            className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded ${styles.container}`}
+            className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] rounded font-mono font-medium"
+            style={getStateBadgeStyle(status)}
         >
-            <span className={`w-1.5 h-1.5 rounded-full ${styles.dot}`} />
-            {status.charAt(0).toUpperCase() + status.slice(1)}
+            ● {status.toUpperCase()}
         </span>
     );
 }

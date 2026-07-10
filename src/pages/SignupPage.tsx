@@ -6,7 +6,6 @@ import EmailVerification from "../components/EmailVerification";
 import { authApi } from "../api/auth.api";
 import { useAuth } from "../context/AuthContext";
 
-const API = import.meta.env.VITE_API_URL ?? "http://localhost:3000/api";
 
 /* ── reusable dark-mode field helper ──────────────────────────── */
 function Field({
@@ -271,7 +270,7 @@ export default function SignupPage() {
                     {/* ── Social buttons ── */}
                     <button
                         id="google-signup-btn"
-                        onClick={() => { window.location.href = `${API}/auth/google`; }}
+                        onClick={() => { window.location.href = "http://localhost:3000/api/auth/google"; }}
                         className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm font-medium rounded-sm transition-all duration-150 active:scale-[0.98]"
                         style={{
                             background: "var(--color-surface-container)",
@@ -286,7 +285,7 @@ export default function SignupPage() {
 
                     <button
                         id="github-signup-btn"
-                        onClick={() => { window.location.href = `${API}/auth/github`; }}
+                        onClick={() => { window.location.href = "http://localhost:3000/api/auth/github"; }}
                         className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm font-medium rounded-sm transition-all duration-150 active:scale-[0.98]"
                         style={{
                             background: "var(--color-surface-container)",
