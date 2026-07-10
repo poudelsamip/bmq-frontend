@@ -29,19 +29,43 @@ export default function JobDrawer({
 
     const queryClient = useQueryClient();
     const [retrying, setRetrying] = useState(false);
+    const [removing, setRemoving] = useState(false);
+
+    const invalidate = async () => {
+        await Promise.all([
+            queryClient.invalidateQueries({
+                queryKey: ["jobDetails", id, queueName, jobId],
+            }),
+            queryClient.invalidateQueries({ queryKey: ["jobs", id, queueName] }),
+        ]);
+    };
 
     const retryHandler = async () => {
         if (!id || !queueName || !jobId) return;
         setRetrying(true);
         try {
             await queueApi.retryJob(id, queueName, jobId);
-            // Refresh the drawer data and the jobs list
-            await queryClient.invalidateQueries({ queryKey: ["jobDetails", id, queueName, jobId] });
-            await queryClient.invalidateQueries({ queryKey: ["jobs", id, queueName] });
+            await invalidate();
         } catch (error) {
             console.error(error);
         } finally {
             setRetrying(false);
+        }
+    };
+
+    const removeHandler = async () => {
+        if (!id || !queueName || !jobId) return;
+        setRemoving(true);
+        try {
+            await queueApi.removeJob(id, queueName, jobId);
+            // Refresh the job list then close the drawer since the job is gone
+            await queryClient.invalidateQueries({
+                queryKey: ["jobs", id, queueName],
+            });
+            onClose();
+        } catch (error) {
+            console.error(error);
+            setRemoving(false);
         }
     };
 
@@ -221,7 +245,7 @@ export default function JobDrawer({
                                             2,
                                         )
                                             // keys
-                                            .replace(/"(.*?)":/g, `"§$1§":`)
+                                            .replace(/(".*?"):/g, `"§$1§":`)
                                             .replace(
                                                 /"§(.*?)§":/g,
                                                 `<span style="color:var(--color-primary)">"$1"</span>:`,
@@ -229,7 +253,7 @@ export default function JobDrawer({
                                             // strings
                                             .replace(
                                                 /: "(.*?)"/g,
-                                                `: <span style="color:#86efac">\"$1\"</span>`,
+                                                `: <span style="color:#86efac">\\"$1\\"</span>`,
                                             )
                                             // numbers / booleans / null
                                             .replace(
@@ -292,6 +316,7 @@ export default function JobDrawer({
                 className="px-5 py-3 flex gap-3"
                 style={{ borderTop: "1px solid var(--color-outline-variant)" }}
             >
+                {/* Retry button — only active for failed jobs */}
                 <button
                     className="flex-1 py-2 rounded text-sm font-medium transition-opacity"
                     style={
@@ -314,6 +339,44 @@ export default function JobDrawer({
                 >
                     {retrying ? "Retrying…" : "Retry"}
                 </button>
+
+                {/* Remove button — always available */}
+                <button
+                    className="flex-1 py-2 rounded text-sm font-medium transition-opacity"
+                    style={
+                        !removing
+                            ? {
+                                  border: "1px solid var(--color-outline-variant)",
+                                  color: "var(--color-on-surface-variant)",
+                                  cursor: "pointer",
+                                  opacity: 1,
+                              }
+                            : {
+                                  border: "1px solid var(--color-outline-variant)",
+                                  color: "var(--color-on-surface-variant)",
+                                  cursor: "not-allowed",
+                                  opacity: 0.45,
+                              }
+                    }
+                    onClick={removeHandler}
+                    disabled={removing}
+                    onMouseEnter={(e) => {
+                        if (!removing)
+                            e.currentTarget.style.borderColor =
+                                "var(--color-error)";
+                        if (!removing)
+                            e.currentTarget.style.color = "var(--color-error)";
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor =
+                            "var(--color-outline-variant)";
+                        e.currentTarget.style.color =
+                            "var(--color-on-surface-variant)";
+                    }}
+                >
+                    {removing ? "Removing…" : "Remove"}
+                </button>
+
                 <button
                     className="flex-1 py-2 rounded text-sm font-medium transition-opacity hover:opacity-80"
                     style={{

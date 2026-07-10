@@ -3,6 +3,7 @@ import api from "./client";
 
 export interface QueueStats {
     queueName: string;
+    isPaused: boolean;
     counts: {
         [index: string]: number;
     };
@@ -81,6 +82,33 @@ export interface JobDetails {
     logs: string[];
 }
 
+// ── New types for Tier 1 features ─────────────────────────────────────────────
+
+export interface RetryJobOutcome {
+    jobId: string;
+    status: "retried" | "skipped" | "failed";
+    reason?: string;
+}
+
+export interface RetryJobsSummary {
+    total: number;
+    retried: number;
+    skipped: number;
+    failed: number;
+    results?: RetryJobOutcome[];
+}
+
+export interface CleanJobsResult {
+    removed: number;
+}
+
+export interface CleanJobsOptions {
+    grace?: number;
+    limit?: number;
+}
+
+// ── API functions ─────────────────────────────────────────────────────────────
+
 export const queueApi = {
     getStats: async (projectId: string, queueName: string) => {
         const response = await api.get<ApiResponse<QueueStats>>(
@@ -114,6 +142,83 @@ export const queueApi = {
     retryJob: async (projectId: string, queueName: string, jobId: string) => {
         const response = await api.post<ApiResponse<null>>(
             `/project/${projectId}/queues/${queueName}/jobs/${jobId}/retry`,
+        );
+        return response.data;
+    },
+
+    // ── New Tier 1 API functions ───────────────────────────────────────────────
+
+    removeJob: async (
+        projectId: string,
+        queueName: string,
+        jobId: string,
+    ) => {
+        const response = await api.delete<ApiResponse<null>>(
+            `/project/${projectId}/queues/${queueName}/jobs/${jobId}`,
+        );
+        return response.data;
+    },
+
+    retryAllFailed: async (projectId: string, queueName: string) => {
+        const response = await api.post<ApiResponse<RetryJobsSummary>>(
+            `/project/${projectId}/queues/${queueName}/jobs/retry-all`,
+        );
+        return response.data;
+    },
+
+    retrySelected: async (
+        projectId: string,
+        queueName: string,
+        jobIds: string[],
+    ) => {
+        const response = await api.post<ApiResponse<RetryJobsSummary>>(
+            `/project/${projectId}/queues/${queueName}/jobs/retry-selected`,
+            { jobIds },
+        );
+        return response.data;
+    },
+
+    cleanCompleted: async (
+        projectId: string,
+        queueName: string,
+        options: CleanJobsOptions = {},
+    ) => {
+        const response = await api.post<ApiResponse<CleanJobsResult>>(
+            `/project/${projectId}/queues/${queueName}/clean/completed`,
+            options,
+        );
+        return response.data;
+    },
+
+    cleanFailed: async (
+        projectId: string,
+        queueName: string,
+        options: CleanJobsOptions = {},
+    ) => {
+        const response = await api.post<ApiResponse<CleanJobsResult>>(
+            `/project/${projectId}/queues/${queueName}/clean/failed`,
+            options,
+        );
+        return response.data;
+    },
+
+    drainQueue: async (projectId: string, queueName: string) => {
+        const response = await api.post<ApiResponse<null>>(
+            `/project/${projectId}/queues/${queueName}/drain`,
+        );
+        return response.data;
+    },
+
+    pauseQueue: async (projectId: string, queueName: string) => {
+        const response = await api.post<ApiResponse<null>>(
+            `/project/${projectId}/queues/${queueName}/pause`,
+        );
+        return response.data;
+    },
+
+    resumeQueue: async (projectId: string, queueName: string) => {
+        const response = await api.post<ApiResponse<null>>(
+            `/project/${projectId}/queues/${queueName}/resume`,
         );
         return response.data;
     },

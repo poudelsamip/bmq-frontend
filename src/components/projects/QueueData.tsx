@@ -1,15 +1,17 @@
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import LatencyChart from "./LatencyChart";
 import QueueHeader from "./QueueHeader";
 import QueueStats from "./QueueStats";
 import StatusDistribution from "./StatusDistribution";
 import ThroughputChart from "./Throughput";
+import { queueApi } from "../../api/queue.api";
+import type { QueueStats as QueueStatsType } from "../../api/queue.api";
+import ConfirmModal from "../ui/ConfirmModal";
 
 interface QueueDataProps {
     selectedQueue: string | null;
-    queueStats: {
-        [index: string]: number;
-    } | null;
+    queueStats: QueueStatsType | null;
     isLoading?: boolean;
 }
 
@@ -55,11 +57,7 @@ function QueueDataSkeleton() {
             {/* Stat cards skeleton — 6 cards */}
             <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(6, 1fr)" }}>
                 {Array.from({ length: 6 }).map((_, i) => (
-                    <div
-                        key={i}
-                        className="qd-skel"
-                        style={{ height: 82 }}
-                    />
+                    <div key={i} className="qd-skel" style={{ height: 82 }} />
                 ))}
             </div>
 
@@ -80,6 +78,37 @@ export default function QueueData({
     queueStats,
     isLoading,
 }: QueueDataProps) {
+    // All hooks must be called unconditionally — before any early returns.
+    const navigate = useNavigate();
+    const { id } = useParams();
+    const [isPausing, setIsPausing] = useState(false);
+    const [showPauseConfirm, setShowPauseConfirm] = useState(false);
+
+    const handleViewAllJobs = () => {
+        navigate(`queues/${selectedQueue}/jobs`);
+    };
+
+    const executePauseQueue = async () => {
+        if (!id || !selectedQueue || isPausing) return;
+        setIsPausing(true);
+        setShowPauseConfirm(false);
+        try {
+            if (queueStats?.isPaused) {
+                await queueApi.resumeQueue(id, selectedQueue);
+            } else {
+                await queueApi.pauseQueue(id, selectedQueue);
+            }
+        } catch (err) {
+            console.error("Pause/Resume failed:", err);
+        } finally {
+            setIsPausing(false);
+        }
+    };
+
+    const handlePauseQueue = () => {
+        setShowPauseConfirm(true);
+    };
+
     if (isLoading) return <QueueDataSkeleton />;
 
     if (!selectedQueue) {
@@ -115,12 +144,6 @@ export default function QueueData({
         );
     }
 
-    const navigate = useNavigate();
-
-    const handleViewAllJobs = () => {
-        navigate(`queues/${selectedQueue}/jobs`);
-    };
-
     return (
         <div
             className="flex-1 p-6 flex flex-col gap-5 overflow-auto"
@@ -129,13 +152,30 @@ export default function QueueData({
             <QueueHeader
                 queueName={selectedQueue}
                 onViewAllJobs={handleViewAllJobs}
+                onPauseQueue={handlePauseQueue}
+                isPausing={isPausing}
+                isPaused={queueStats?.isPaused}
             />
-            <QueueStats queueStats={queueStats} />
+            <QueueStats queueStats={queueStats?.counts || null} />
             <div className="flex gap-4">
                 <ThroughputChart />
                 <StatusDistribution />
             </div>
             <LatencyChart />
+            <ConfirmModal
+                isOpen={showPauseConfirm}
+                title={queueStats?.isPaused ? "Resume Queue" : "Pause Queue"}
+                message={
+                    queueStats?.isPaused
+                        ? "Are you sure you want to resume the queue? Jobs will begin processing again."
+                        : "Are you sure you want to pause the queue? Jobs will not be processed until it is resumed."
+                }
+                isDestructive={false}
+                confirmText={queueStats?.isPaused ? "Resume Queue" : "Pause Queue"}
+                onConfirm={executePauseQueue}
+                onCancel={() => setShowPauseConfirm(false)}
+                isBusy={isPausing}
+            />
         </div>
     );
 }

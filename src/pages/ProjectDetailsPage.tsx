@@ -130,7 +130,7 @@ export default function ProjectDetailsPage() {
             />
             <QueueData
                 selectedQueue={selectedQueue}
-                queueStats={queueStats?.counts || null}
+                queueStats={queueStats}
                 isLoading={isLoading || isLoadingStats}
             />
         </div>

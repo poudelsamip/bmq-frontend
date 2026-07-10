@@ -1,14 +1,20 @@
-const HEADER_ACTIONS: string[] = ["Pause Queue", "Purge"];
-
 interface QueueHeaderProps {
     queueName: string | null;
     onViewAllJobs: () => void;
+    onPauseQueue?: () => void;
+    isPausing?: boolean;
+    isPaused?: boolean;
 }
 
 export default function QueueHeader({
     queueName,
     onViewAllJobs,
+    onPauseQueue,
+    isPausing = false,
+    isPaused = false,
 }: QueueHeaderProps) {
+    const isBusy = isPausing;
+
     return (
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -25,17 +31,19 @@ export default function QueueHeader({
                     className="flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase"
                     style={{
                         borderRadius: 9999,
-                        background: "rgba(183,196,255,0.1)",
-                        color: "var(--color-primary)",
-                        border: "1px solid rgba(183,196,255,0.25)",
+                        background: isPaused ? "rgba(239,68,68,0.1)" : "rgba(183,196,255,0.1)",
+                        color: isPaused ? "var(--color-error)" : "var(--color-primary)",
+                        border: `1px solid ${isPaused ? "rgba(239,68,68,0.25)" : "rgba(183,196,255,0.25)"}`,
                         letterSpacing: "0.05em",
                     }}
                 >
-                    <span
-                        className="w-1.5 h-1.5 rounded-full animate-pulse"
-                        style={{ background: "var(--color-primary)" }}
-                    />
-                    Live
+                    {!isPaused && (
+                        <span
+                            className="w-1.5 h-1.5 rounded-full animate-pulse"
+                            style={{ background: "var(--color-primary)" }}
+                        />
+                    )}
+                    {isPaused ? "Paused" : "Live"}
                 </span>
             </div>
 
@@ -52,28 +60,34 @@ export default function QueueHeader({
                 >
                     View All Jobs
                 </button>
-                {HEADER_ACTIONS.map((label) => (
-                    <button
-                        key={label}
-                        className="px-3 py-1.5 text-[13px] font-medium transition-colors"
-                        style={{
-                            background: "transparent",
-                            color: "var(--color-on-surface)",
-                            border: "1px solid var(--color-outline)",
-                            borderRadius: 2,
-                            letterSpacing: "0.02em",
-                        }}
-                        onMouseEnter={(e) =>
-                            (e.currentTarget.style.background =
-                                "var(--color-surface-container-low)")
-                        }
-                        onMouseLeave={(e) =>
-                            (e.currentTarget.style.background = "transparent")
-                        }
-                    >
-                        {label}
-                    </button>
-                ))}
+
+                <button
+                    onClick={onPauseQueue}
+                    disabled={isBusy || !onPauseQueue}
+                    className="px-3 py-1.5 text-[13px] font-medium transition-colors"
+                    style={{
+                        background: "transparent",
+                        color: isPausing
+                            ? "var(--color-primary)"
+                            : "var(--color-on-surface)",
+                        border: "1px solid var(--color-outline)",
+                        borderRadius: 2,
+                        letterSpacing: "0.02em",
+                        opacity: !onPauseQueue ? 0.45 : 1,
+                        cursor: isBusy || !onPauseQueue ? "default" : "pointer",
+                    }}
+                    onMouseEnter={(e) => {
+                        if (!isBusy && onPauseQueue)
+                            e.currentTarget.style.background =
+                                "var(--color-surface-container-low)";
+                    }}
+                    onMouseLeave={(e) =>
+                        (e.currentTarget.style.background = "transparent")
+                    }
+                >
+                    {isPausing ? (isPaused ? "Resuming…" : "Pausing…") : (isPaused ? "Resume Queue" : "Pause Queue")}
+                </button>
+
             </div>
         </div>
     );
