@@ -139,6 +139,10 @@ export const queueApi = {
         return `http://localhost:3000/api/project/${projectId}/queues/${queueName}/stream`;
     },
 
+    streamAllEventSource: (projectId: string) => {
+        return `http://localhost:3000/api/project/${projectId}/queues/stream`;
+    },
+
     retryJob: async (projectId: string, queueName: string, jobId: string) => {
         const response = await api.post<ApiResponse<null>>(
             `/project/${projectId}/queues/${queueName}/jobs/${jobId}/retry`,

@@ -1,19 +1,17 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { projectApi, type Project } from "../api/projects.api";
-import ProjectSidebar from "../components/projects/ProjectSidebar";
-import QueueData from "../components/projects/QueueData";
 import { useEffect, useState } from "react";
 import { queueApi, type QueueStats } from "../api/queue.api";
 import type { ApiResponse } from "../api/auth.api";
+import QueueCard from "../components/projects/QueueCard";
 
 export default function ProjectDetailsPage() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const [selectedQueue, setSelectedQueue] = useState<string | null>(null);
-    const [queueStats, setQueueStats] = useState<QueueStats | null>(null);
-    const [isLoadingStats, setIsLoadingStats] = useState(false);
+    const [allQueuesStats, setAllQueuesStats] = useState<QueueStats[]>([]);
+    const [isPausingAll, setIsPausingAll] = useState(false);
 
     const {
         data: projectResponse,
@@ -24,43 +22,34 @@ export default function ProjectDetailsPage() {
         queryKey: ["project", id],
         queryFn: async () => {
             const res = await projectApi.getProject(id!);
-            console.log(res);
             return res;
         },
-        enabled: !!id, // skip the query if id is missing
-        staleTime: 30_000, // treat data as fresh for 30s
-        retry: 2, // retry failed requests twice
+        enabled: !!id,
+        staleTime: 30_000,
+        retry: 2,
     });
-
-    const handleQueueSelect = async (queueName: string) => {
-        setSelectedQueue(queueName);
-        setQueueStats(null);       // clear stale stats from previous queue
-        setIsLoadingStats(true);   // show skeleton until first SSE message
-    };
 
     if (!id) {
         navigate("/dashboard");
         return null;
     }
 
-    let project;
+    let project: Project | undefined;
     if (projectResponse) {
         project = projectResponse?.data;
     }
 
     useEffect(() => {
-        if (!selectedQueue || !id) return;
+        if (!id) return;
 
         const source = new EventSource(
-            queueApi.streamEventSource(id, selectedQueue),
+            queueApi.streamAllEventSource(id),
             { withCredentials: true },
         );
 
         source.onmessage = (event) => {
-            const data = JSON.parse(event.data) as QueueStats;
-            setQueueStats(data);
-            setIsLoadingStats(false); // skeleton done — real data arrived
-            console.log("Received queue stats update:", data);
+            const data = JSON.parse(event.data) as QueueStats[];
+            setAllQueuesStats(data);
         };
 
         source.addEventListener("error", (event: MessageEvent) => {
@@ -72,7 +61,6 @@ export default function ProjectDetailsPage() {
             }
         });
 
-        // connection-level error
         source.onerror = (err) => {
             console.error("Connection lost:", err);
         };
@@ -80,30 +68,36 @@ export default function ProjectDetailsPage() {
         return () => {
             source.close();
         };
-    }, [selectedQueue, id]);
+    }, [id]);
 
-    console.log("Project response:", projectResponse);
-
+    const handlePauseAll = async () => {
+        if (!project || isPausingAll) return;
+        setIsPausingAll(true);
+        try {
+            const promises = project.queues.map((q) => queueApi.pauseQueue(id, q));
+            await Promise.all(promises);
+        } catch (err) {
+            console.error("Failed to pause all queues", err);
+        } finally {
+            setIsPausingAll(false);
+        }
+    };
 
     if (isError) {
         return (
             <div
                 className="flex flex-col items-center justify-center h-screen gap-3"
-                style={{ background: "var(--color-background)" }}
+                style={{ background: "#0D0E12" }}
             >
-                <h1
-                    className="text-2xl font-semibold"
-                    style={{ color: "var(--color-error)" }}
-                >
+                <h1 className="text-2xl font-semibold text-red-500">
                     {error?.message || "Error loading project"}
                 </h1>
-                <p style={{ color: "var(--color-on-surface-variant)" }}>
+                <p className="text-gray-400">
                     Please make sure your Redis connection is active.
                 </p>
                 <button
                     onClick={() => navigate("/dashboard")}
-                    className="mt-2 underline"
-                    style={{ color: "var(--color-primary)" }}
+                    className="mt-2 text-indigo-400 underline"
                 >
                     Back to Dashboard
                 </button>
@@ -113,26 +107,100 @@ export default function ProjectDetailsPage() {
 
     return (
         <div
-            className="flex"
+            className="flex flex-col p-8"
             style={{
-                background: "var(--color-background)",
+                background: "#0D0E12", // Very dark background from mockup
                 fontFamily: "Inter, sans-serif",
-                margin: "-24px", // offset padding for full-width sidebar
-                height: "calc(100vh - 64px)", // fill exactly the main area below the header
-                overflow: "hidden", // prevent this wrapper from scrolling
+                margin: "-24px",
+                height: "calc(100vh - 64px)",
+                overflow: "auto",
+                color: "#E0E0E0"
             }}
         >
-            <ProjectSidebar
-                queues={project?.queues || []}
-                projectName={project?.project.name || "Project"}
-                onQueueSelect={handleQueueSelect}
-                selectedQeueue={selectedQueue}
-            />
-            <QueueData
-                selectedQueue={selectedQueue}
-                queueStats={queueStats}
-                isLoading={isLoading || isLoadingStats}
-            />
+            <div className="mb-8">
+                <div className="text-[10px] font-bold text-[#8E8E93] uppercase tracking-widest mb-4">
+                    ALL PROJECTS &gt; {project?.project.name || "PROJECT"}
+                </div>
+                
+                <div className="flex justify-between items-center">
+                    <h1 className="text-2xl font-semibold text-white">Queues</h1>
+                    <div className="flex gap-3">
+                        <button 
+                            className="px-4 py-2 text-xs font-medium rounded transition-colors"
+                            style={{
+                                background: "transparent",
+                                color: "#E0E0E0",
+                                border: "1px solid rgba(255,255,255,0.1)",
+                            }}
+                            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.05)")}
+                            onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                        >
+                            View All Jobs
+                        </button>
+                        <button 
+                            className="px-4 py-2 text-xs font-medium rounded transition-colors"
+                            onClick={handlePauseAll}
+                            disabled={isPausingAll}
+                            style={{
+                                background: "rgba(57, 73, 171, 0.2)",
+                                color: "#8C9EFF",
+                                border: "1px solid rgba(57, 73, 171, 0.4)",
+                                opacity: isPausingAll ? 0.5 : 1
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.background = "rgba(57, 73, 171, 0.3)";
+                                e.currentTarget.style.borderColor = "rgba(57, 73, 171, 0.6)";
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.background = "rgba(57, 73, 171, 0.2)";
+                                e.currentTarget.style.borderColor = "rgba(57, 73, 171, 0.4)";
+                            }}
+                        >
+                            {isPausingAll ? "Pausing..." : "Pause All"}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {isLoading ? (
+                <div className="flex items-center justify-center h-64">
+                    <div className="text-[#8E8E93]">Loading queues...</div>
+                </div>
+            ) : (
+                <div 
+                    className="grid gap-6"
+                    style={{ gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))" }}
+                >
+                    {project?.queues.map((queueName) => {
+                        // Find stats if we have them from SSE, otherwise create empty default
+                        const stats = allQueuesStats.find((s) => s.queueName === queueName) || {
+                            queueName,
+                            isPaused: false,
+                            counts: {
+                                completed: 0,
+                                waiting: 0,
+                                active: 0,
+                                delayed: 0,
+                                failed: 0
+                            }
+                        };
+                        
+                        return (
+                            <QueueCard 
+                                key={queueName} 
+                                stats={stats} 
+                                projectId={id} 
+                            />
+                        );
+                    })}
+                    
+                    {(!project?.queues || project.queues.length === 0) && (
+                        <div className="col-span-full text-center py-12 text-[#8E8E93]">
+                            No queues found in this project.
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 }
