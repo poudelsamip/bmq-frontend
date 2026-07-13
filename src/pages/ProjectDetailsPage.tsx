@@ -1,10 +1,10 @@
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { projectApi, type Project } from "../api/projects.api";
 import { useEffect, useState } from "react";
 import { queueApi, type QueueStats } from "../api/queue.api";
 import type { ApiResponse } from "../api/auth.api";
-import QueueCard from "../components/projects/QueueCard";
+import QueueCard, { QueueCardSkeleton } from "../components/projects/QueueCard";
 
 export default function ProjectDetailsPage() {
     const { id } = useParams();
@@ -118,25 +118,20 @@ export default function ProjectDetailsPage() {
             }}
         >
             <div className="mb-8">
-                <div className="text-[10px] font-bold text-[#8E8E93] uppercase tracking-widest mb-4">
-                    ALL PROJECTS &gt; {project?.project.name || "PROJECT"}
+                <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest mb-4">
+                    <button
+                        onClick={() => navigate("/dashboard")}
+                        className="underline underline-offset-2"
+                        style={{ color: "var(--color-primary)" }}
+                    >
+                        ALL PROJECTS
+                    </button>
+                    <span style={{ color: "#8E8E93" }}>&gt; {project?.project.name || "PROJECT"}</span>
                 </div>
                 
                 <div className="flex justify-between items-center">
                     <h1 className="text-2xl font-semibold text-white">Queues</h1>
                     <div className="flex gap-3">
-                        <button 
-                            className="px-4 py-2 text-xs font-medium rounded transition-colors"
-                            style={{
-                                background: "transparent",
-                                color: "#E0E0E0",
-                                border: "1px solid rgba(255,255,255,0.1)",
-                            }}
-                            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.05)")}
-                            onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                        >
-                            View All Jobs
-                        </button>
                         <button 
                             className="px-4 py-2 text-xs font-medium rounded transition-colors"
                             onClick={handlePauseAll}
@@ -163,13 +158,18 @@ export default function ProjectDetailsPage() {
             </div>
 
             {isLoading ? (
-                <div className="flex items-center justify-center h-64">
-                    <div className="text-[#8E8E93]">Loading queues...</div>
+                <div 
+                    className="grid gap-6 w-full"
+                    style={{ gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))" }}
+                >
+                    {Array.from({ length: 4 }).map((_, i) => (
+                        <QueueCardSkeleton key={i} />
+                    ))}
                 </div>
             ) : (
                 <div 
-                    className="grid gap-6"
-                    style={{ gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))" }}
+                    className="grid gap-6 w-full"
+                    style={{ gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))" }}
                 >
                     {project?.queues.map((queueName) => {
                         // Find stats if we have them from SSE, otherwise create empty default

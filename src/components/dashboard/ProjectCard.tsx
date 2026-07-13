@@ -1,4 +1,5 @@
 import type { AllProjects } from "../../api/projects.api";
+import { useState, useRef, useEffect } from "react";
 
 const ICONS = ["dns", "storage", "cloud", "hub", "memory", "router"];
 
@@ -55,10 +56,26 @@ function StatBadge({ color, label }: StatBadgeProps) {
 export interface ProjectCardProps {
     project: AllProjects;
     onNavigate?: (id: string) => void;
-    onMenuClick?: (id: string) => void;
+    onDelete?: (id: string) => void;
 }
 
-export default function ProjectCard({ project, onNavigate, onMenuClick }: ProjectCardProps) {
+export default function ProjectCard({ project, onNavigate, onDelete }: ProjectCardProps) {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const menuRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setIsMenuOpen(false);
+            }
+        }
+        if (isMenuOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isMenuOpen]);
     const iconName = ICONS[Math.abs(project.id.charCodeAt(0) + project.id.charCodeAt(1 % project.id.length)) % ICONS.length];
 
     return (
@@ -104,25 +121,48 @@ export default function ProjectCard({ project, onNavigate, onMenuClick }: Projec
                             {iconName}
                         </span>
                     </div>
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onMenuClick?.(project.id);
-                        }}
-                        className="flex items-center justify-center w-7 h-7 rounded-sm transition-colors"
-                        style={{ color: "var(--color-on-surface-variant)" }}
-                        aria-label="More options"
-                        onMouseEnter={(e) =>
-                            ((e.currentTarget as HTMLElement).style.color = "var(--color-on-surface)")
-                        }
-                        onMouseLeave={(e) =>
-                            ((e.currentTarget as HTMLElement).style.color = "var(--color-on-surface-variant)")
-                        }
-                    >
-                        <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
-                            more_vert
-                        </span>
-                    </button>
+                    <div className="relative" ref={menuRef}>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setIsMenuOpen(!isMenuOpen);
+                            }}
+                            className="flex items-center justify-center w-7 h-7 rounded-sm transition-colors"
+                            style={{ color: "var(--color-on-surface-variant)" }}
+                            aria-label="More options"
+                            onMouseEnter={(e) =>
+                                ((e.currentTarget as HTMLElement).style.color = "var(--color-on-surface)")
+                            }
+                            onMouseLeave={(e) =>
+                                ((e.currentTarget as HTMLElement).style.color = "var(--color-on-surface-variant)")
+                            }
+                        >
+                            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                                more_vert
+                            </span>
+                        </button>
+                        {isMenuOpen && (
+                            <div 
+                                className="absolute right-0 mt-1 w-40 rounded-sm shadow-lg z-10"
+                                style={{
+                                    backgroundColor: "var(--color-surface-container-highest)",
+                                    border: "1px solid var(--color-outline-variant)",
+                                }}
+                            >
+                                <button
+                                    className="w-full text-left px-4 py-2 text-sm hover:bg-red-500/10 transition-colors"
+                                    style={{ color: "var(--color-error)" }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setIsMenuOpen(false);
+                                        onDelete?.(project.id);
+                                    }}
+                                >
+                                    Delete project
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* Name */}

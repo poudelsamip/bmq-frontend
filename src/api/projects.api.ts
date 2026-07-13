@@ -52,4 +52,9 @@ export const projectApi = {
 
         return response.data;
     },
+
+    deleteProject: async (id: string) => {
+        const response = await api.delete(`/project/${id}`);
+        return response.data;
+    },
 };

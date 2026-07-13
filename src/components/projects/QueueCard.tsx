@@ -1,12 +1,190 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { QueueStats } from "../../api/queue.api";
 import { queueApi } from "../../api/queue.api";
+
+// ── Types ────────────────────────────────────────────────────────────────────
 
 interface QueueCardProps {
     stats: QueueStats;
     projectId: string;
 }
+
+// ── Stat config ──────────────────────────────────────────────────────────────
+
+interface StatConfig {
+    key: string;
+    label: string;
+    color: string;
+    borderColor: string;
+    icon: React.ReactNode;
+}
+
+const STAT_CONFIGS: StatConfig[] = [
+    {
+        key: "completed",
+        label: "COMPLETED",
+        color: "#4CAF50",
+        borderColor: "#4CAF50",
+        icon: (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+                <path d="M8 12l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+        ),
+    },
+    {
+        key: "waiting",
+        label: "WAITING",
+        color: "#FFA726",
+        borderColor: "#FFA726",
+        icon: (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+                <path d="M12 7v5l3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+        ),
+    },
+    {
+        key: "active",
+        label: "ACTIVE",
+        color: "#66BB6A",
+        borderColor: "#66BB6A",
+        icon: (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+        ),
+    },
+    {
+        key: "delayed",
+        label: "DELAYED",
+        color: "#42A5F5",
+        borderColor: "#42A5F5",
+        icon: (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+                <path d="M12 7v5l-3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+        ),
+    },
+    {
+        key: "failed",
+        label: "FAILED",
+        color: "#EF5350",
+        borderColor: "#EF5350",
+        icon: (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" strokeWidth="2" />
+                <line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <circle cx="12" cy="17" r="0.5" fill="currentColor" stroke="currentColor" strokeWidth="1" />
+            </svg>
+        ),
+    },
+];
+
+// ── Skeleton loader ──────────────────────────────────────────────────────────
+
+const shimmerKeyframes = `
+@keyframes qc-shimmer {
+    0%   { background-position: -600px 0; }
+    100% { background-position:  600px 0; }
+}
+`;
+
+function SkeletonBox({
+    width,
+    height,
+    borderRadius = 4,
+    style,
+}: {
+    width?: number | string;
+    height: number | string;
+    borderRadius?: number;
+    style?: React.CSSProperties;
+}) {
+    return (
+        <div
+            style={{
+                width: width ?? "100%",
+                height,
+                borderRadius,
+                background:
+                    "linear-gradient(90deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.07) 45%, rgba(255,255,255,0.03) 80%)",
+                backgroundSize: "600px 100%",
+                animation: "qc-shimmer 2.2s infinite linear",
+                ...style,
+            }}
+        />
+    );
+}
+
+export function QueueCardSkeleton() {
+    return (
+        <div
+            style={{
+                background: "#16171E",
+                border: "1px solid rgba(255,255,255,0.06)",
+                borderRadius: 4,
+                overflow: "hidden",
+            }}
+        >
+            <style>{shimmerKeyframes}</style>
+
+            {/* Header skeleton */}
+            <div
+                style={{
+                    padding: "20px 20px 0",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                }}
+            >
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <SkeletonBox width={44} height={44} borderRadius={4} />
+                    <div>
+                        <SkeletonBox width={120} height={16} />
+                        <SkeletonBox
+                            width={80}
+                            height={12}
+                            style={{ marginTop: 6 }}
+                        />
+                    </div>
+                </div>
+                <SkeletonBox width={64} height={28} borderRadius={14} />
+            </div>
+
+            {/* Stats skeleton */}
+            <div
+                style={{
+                    padding: "0 20px 16px",
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+                    gap: 8,
+                }}
+            >
+                {Array.from({ length: 5 }).map((_, i) => (
+                    <SkeletonBox key={i} height={90} borderRadius={4} />
+                ))}
+            </div>
+
+            {/* Buttons skeleton */}
+            <div
+                style={{
+                    padding: "0 20px 20px",
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: 10,
+                }}
+            >
+                <SkeletonBox height={44} borderRadius={4} />
+                <SkeletonBox height={44} borderRadius={4} />
+            </div>
+        </div>
+    );
+}
+
+// ── Main component ───────────────────────────────────────────────────────────
 
 export default function QueueCard({ stats, projectId }: QueueCardProps) {
     const navigate = useNavigate();
@@ -20,23 +198,7 @@ export default function QueueCard({ stats, projectId }: QueueCardProps) {
     const delayed = counts?.delayed || 0;
     const failed = counts?.failed || 0;
 
-    let statusTag = "LIVE";
-    let statusColor = "#3949AB";
-    let statusBg = "rgba(57, 73, 171, 0.15)";
-    
-    if (isPaused) {
-        statusTag = "PAUSED";
-        statusColor = "#FBC02D";
-        statusBg = "rgba(251, 192, 45, 0.15)";
-    } else if (failed > 0) {
-        statusTag = `${failed} FAILED`;
-        statusColor = "#E53935";
-        statusBg = "rgba(229, 57, 53, 0.15)";
-    } else if (active === 0 && waiting === 0) {
-        statusTag = "HEALTHY";
-        statusColor = "#3949AB";
-        statusBg = "rgba(57, 73, 171, 0.15)";
-    }
+    const isLive = !isPaused;
 
     const handleViewJobs = () => {
         navigate(`queues/${queueName}/jobs`);
@@ -58,138 +220,343 @@ export default function QueueCard({ stats, projectId }: QueueCardProps) {
         }
     };
 
+    const statValues: Record<string, number> = {
+        completed,
+        waiting,
+        active,
+        delayed,
+        failed,
+    };
+
     return (
         <div
-            className="flex flex-col overflow-hidden"
             style={{
-                background: "#16161D", // Dark card background from image
-                border: "1px solid rgba(255, 255, 255, 0.05)",
-                borderRadius: "4px",
+                background: "#16171E",
+                border: "1px solid rgba(255,255,255,0.06)",
+                borderRadius: 4,
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+                transition: "border-color 0.2s",
             }}
+            onMouseEnter={(e) =>
+                (e.currentTarget.style.borderColor = "rgba(124,107,255,0.25)")
+            }
+            onMouseLeave={(e) =>
+                (e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)")
+            }
         >
-            <div className="p-5 flex flex-col flex-1">
-                <div className="flex justify-between items-center mb-4">
-                    <div className="flex items-center gap-2">
-                        <div 
-                            style={{ 
-                                width: 6, 
-                                height: 6, 
-                                borderRadius: "50%", 
-                                background: statusColor 
-                            }} 
-                        />
-                        <span 
-                            className="font-medium text-sm" 
-                            style={{ color: "#E0E0E0" }}
-                        >
-                            {queueName}
-                        </span>
-                    </div>
+            {/* ── Header ────────────────────────────────────────────── */}
+            <div
+                style={{
+                    padding: "20px 20px 0",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                }}
+            >
+                <div
+                    style={{ display: "flex", alignItems: "center", gap: 12 }}
+                >
+                    {/* Queue icon */}
                     <div
-                        className="px-2 py-0.5 rounded text-[10px] font-bold"
                         style={{
-                            color: statusColor,
-                            background: statusBg,
-                            letterSpacing: "0.05em",
+                            width: 44,
+                            height: 44,
+                            borderRadius: 4,
+                            background: "rgba(124,107,255,0.15)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            flexShrink: 0,
                         }}
                     >
-                        {statusTag}
-                    </div>
-                </div>
-
-                <div className="flex items-baseline gap-2 mb-2">
-                    <span 
-                        className="text-3xl font-semibold tracking-tight" 
-                        style={{ color: "#FFFFFF" }}
-                    >
-                        {completed.toLocaleString()}
-                    </span>
-                    <span 
-                        className="text-xs" 
-                        style={{ color: "#8E8E93" }}
-                    >
-                        completed
-                    </span>
-                </div>
-
-                <div className="w-full h-[40px] mt-2 mb-4">
-                    {/* Dummy Sparkline */}
-                    <svg
-                        className="w-full h-full"
-                        viewBox="0 0 100 20"
-                        preserveAspectRatio="none"
-                    >
-                        <path
-                            d="M0,10 Q10,2 20,12 T40,8 T60,15 T80,5 T100,10"
+                        <svg
+                            width="22"
+                            height="22"
+                            viewBox="0 0 24 24"
                             fill="none"
-                            stroke={statusColor}
-                            strokeWidth="1.5"
+                            stroke="#7C6BFF"
+                            strokeWidth="2"
                             strokeLinecap="round"
                             strokeLinejoin="round"
+                        >
+                            <rect
+                                x="2"
+                                y="2"
+                                width="20"
+                                height="8"
+                                rx="2"
+                                ry="2"
+                            />
+                            <rect
+                                x="2"
+                                y="14"
+                                width="20"
+                                height="8"
+                                rx="2"
+                                ry="2"
+                            />
+                            <line x1="6" y1="6" x2="6.01" y2="6" />
+                            <line x1="6" y1="18" x2="6.01" y2="18" />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <div
+                            style={{
+                                fontSize: 16,
+                                fontWeight: 600,
+                                color: "#fff",
+                                lineHeight: 1.2,
+                            }}
+                        >
+                            {queueName}
+                        </div>
+                        <div
+                            style={{
+                                fontSize: 12,
+                                color: "rgba(255,255,255,0.4)",
+                                marginTop: 2,
+                            }}
+                        >
+                            Queue
+                        </div>
+                    </div>
+                </div>
+
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    {/* Status badge */}
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 6,
+                            padding: "5px 14px",
+                            borderRadius: 14,
+                            background: isLive
+                                ? "rgba(76,175,80,0.12)"
+                                : "rgba(255,167,38,0.12)",
+                            border: `1px solid ${isLive ? "rgba(76,175,80,0.3)" : "rgba(255,167,38,0.3)"}`,
+                        }}
+                    >
+                        <div
+                            style={{
+                                width: 7,
+                                height: 7,
+                                borderRadius: "50%",
+                                background: isLive ? "#4CAF50" : "#FFA726",
+                                boxShadow: isLive
+                                    ? "0 0 6px rgba(76,175,80,0.6)"
+                                    : "0 0 6px rgba(255,167,38,0.6)",
+                                animation: isLive
+                                    ? undefined
+                                    : undefined,
+                            }}
                         />
+                        <span
+                            style={{
+                                fontSize: 12,
+                                fontWeight: 700,
+                                color: isLive ? "#4CAF50" : "#FFA726",
+                                letterSpacing: "0.05em",
+                            }}
+                        >
+                            {isLive ? "LIVE" : "PAUSED"}
+                        </span>
+                    </div>
+
+                    {/* Three-dot menu placeholder */}
+                    <button
+                        style={{
+                            background: "none",
+                            border: "none",
+                            color: "rgba(255,255,255,0.3)",
+                            cursor: "pointer",
+                            padding: 4,
+                            fontSize: 18,
+                            lineHeight: 1,
+                        }}
+                        title="More actions"
+                    >
+                        ⋮
+                    </button>
+                </div>
+            </div>
+
+            {/* ── Stats row ─────────────────────────────────────────── */}
+            <div
+                style={{
+                    padding: "16px 20px",
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+                    gap: 8,
+                }}
+            >
+                {STAT_CONFIGS.map((cfg) => (
+                    <div
+                        key={cfg.key}
+                        style={{
+                            background: "rgba(255,255,255,0.03)",
+                            borderRadius: 4,
+                            padding: "12px 10px",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            borderBottom: `3px solid ${cfg.borderColor}`,
+                        }}
+                    >
+                        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                            <span
+                                style={{
+                                    fontSize: 10,
+                                    fontWeight: 700,
+                                    color: "rgba(255,255,255,0.5)",
+                                    letterSpacing: "0.06em",
+                                }}
+                            >
+                                {cfg.label}
+                            </span>
+                            <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
+                                <span
+                                    style={{
+                                        fontSize: 22,
+                                        fontWeight: 700,
+                                        color: "#E0E0E0",
+                                        lineHeight: 1,
+                                    }}
+                                >
+                                    {(statValues[cfg.key] ?? 0).toLocaleString()}
+                                </span>
+                                <span
+                                    style={{
+                                        fontSize: 10,
+                                        color: "rgba(255,255,255,0.3)",
+                                    }}
+                                >
+                                    jobs
+                                </span>
+                            </div>
+                        </div>
+                        <div style={{ color: "#E0E0E0" }}>{cfg.icon}</div>
+                    </div>
+                ))}
+            </div>
+
+            {/* ── Action buttons ─────────────────────────────────────── */}
+            <div
+                style={{
+                    padding: "0 20px 20px",
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: 10,
+                }}
+            >
+                <button
+                    onClick={handlePauseResume}
+                    disabled={isPausing}
+                    style={{
+                        height: 44,
+                        borderRadius: 4,
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        background: "rgba(255,255,255,0.04)",
+                        color: "#E0E0E0",
+                        fontSize: 14,
+                        fontWeight: 600,
+                        cursor: isPausing ? "default" : "pointer",
+                        opacity: isPausing ? 0.5 : 1,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 8,
+                        transition: "background 0.15s, border-color 0.15s",
+                    }}
+                    onMouseEnter={(e) => {
+                        if (!isPausing) {
+                            e.currentTarget.style.background =
+                                "rgba(255,255,255,0.08)";
+                            e.currentTarget.style.borderColor =
+                                "rgba(255,255,255,0.2)";
+                        }
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.background =
+                            "rgba(255,255,255,0.04)";
+                        e.currentTarget.style.borderColor =
+                            "rgba(255,255,255,0.1)";
+                    }}
+                >
+                    {isPaused ? (
+                        <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                        >
+                            <polygon points="5,3 19,12 5,21" />
+                        </svg>
+                    ) : (
+                        <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                        >
+                            <rect x="6" y="4" width="4" height="16" />
+                            <rect x="14" y="4" width="4" height="16" />
+                        </svg>
+                    )}
+                    {isPausing
+                        ? isPaused
+                            ? "Resuming…"
+                            : "Pausing…"
+                        : isPaused
+                          ? "Resume"
+                          : "Pause"}
+                </button>
+
+                <button
+                    onClick={handleViewJobs}
+                    style={{
+                        height: 44,
+                        borderRadius: 4,
+                        border: "none",
+                        background: "#5B4FD6",
+                        color: "#fff",
+                        fontSize: 14,
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 8,
+                        transition: "background 0.15s",
+                    }}
+                    onMouseEnter={(e) =>
+                        (e.currentTarget.style.background = "#6B5FE6")
+                    }
+                    onMouseLeave={(e) =>
+                        (e.currentTarget.style.background = "#5B4FD6")
+                    }
+                >
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    >
+                        <line x1="8" y1="6" x2="21" y2="6" />
+                        <line x1="8" y1="12" x2="21" y2="12" />
+                        <line x1="8" y1="18" x2="21" y2="18" />
+                        <line x1="3" y1="6" x2="3.01" y2="6" />
+                        <line x1="3" y1="12" x2="3.01" y2="12" />
+                        <line x1="3" y1="18" x2="3.01" y2="18" />
                     </svg>
-                </div>
-
-                <div 
-                    className="h-[1px] w-full mb-3" 
-                    style={{ background: "rgba(255,255,255,0.05)" }} 
-                />
-
-                <div className="flex justify-between mb-4 px-1">
-                    <div className="flex flex-col">
-                        <span className="text-[10px] font-semibold text-[#8E8E93] mb-1 uppercase tracking-wider">Waiting</span>
-                        <span className="text-sm font-medium text-[#FBC02D]">{waiting}</span>
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-[10px] font-semibold text-[#8E8E93] mb-1 uppercase tracking-wider">Active</span>
-                        <span className="text-sm font-medium text-[#FFFFFF]">{active}</span>
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-[10px] font-semibold text-[#8E8E93] mb-1 uppercase tracking-wider">
-                            {failed > 0 ? "Failed" : "Delayed"}
-                        </span>
-                        <span className="text-sm font-medium text-[#FFFFFF]">
-                            {failed > 0 ? failed : delayed}
-                        </span>
-                    </div>
-                </div>
-
-                <div className="mt-auto flex gap-3 pt-2">
-                    <button
-                        onClick={handlePauseResume}
-                        disabled={isPausing}
-                        className="flex-1 py-2 text-xs font-medium rounded transition-colors"
-                        style={{
-                            background: "transparent",
-                            color: "#E0E0E0",
-                            border: "1px solid rgba(255,255,255,0.1)",
-                            opacity: isPausing ? 0.5 : 1
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.05)")}
-                        onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                    >
-                        {isPaused ? "Resume" : "Pause"}
-                    </button>
-                    <button
-                        onClick={handleViewJobs}
-                        className="flex-1 py-2 text-xs font-medium rounded transition-colors"
-                        style={{
-                            background: "rgba(57, 73, 171, 0.2)",
-                            color: "#8C9EFF",
-                            border: "1px solid rgba(57, 73, 171, 0.4)",
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.background = "rgba(57, 73, 171, 0.3)";
-                            e.currentTarget.style.borderColor = "rgba(57, 73, 171, 0.6)";
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.background = "rgba(57, 73, 171, 0.2)";
-                            e.currentTarget.style.borderColor = "rgba(57, 73, 171, 0.4)";
-                        }}
-                    >
-                        View jobs
-                    </button>
-                </div>
+                    View jobs
+                </button>
             </div>
         </div>
     );

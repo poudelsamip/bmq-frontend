@@ -4,6 +4,21 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { queueApi, type JobDetails } from "../../api/queue.api";
 import { X } from "lucide-react";
 import { getStateBadgeStyle } from "../ui/StatusBadge";
+import { formatDateTimeSplit } from "../../utils/date";
+import FlowTreeModal from "./FlowTreeModal";
+
+const renderTimestamp = (timestamp: number | string | undefined | null) => {
+    const formatted = formatDateTimeSplit(timestamp);
+    if (!formatted) return "-";
+    return (
+        <span className="block leading-tight">
+            <span>{formatted.date}</span>
+            <span className="block text-[15px] mt-0.5" style={{ color: "var(--color-on-surface-variant)" }}>
+                {formatted.time}
+            </span>
+        </span>
+    );
+};
 
 export default function JobDrawer({
     jobId,
@@ -30,6 +45,7 @@ export default function JobDrawer({
     const queryClient = useQueryClient();
     const [retrying, setRetrying] = useState(false);
     const [removing, setRemoving] = useState(false);
+    const [showFlowTree, setShowFlowTree] = useState(false);
 
     const invalidate = async () => {
         await Promise.all([
@@ -69,11 +85,21 @@ export default function JobDrawer({
         }
     };
 
-    const handleFlowTreeClick = async () => {};
+    const handleFlowTreeClick = () => {
+        setShowFlowTree(true);
+    };
 
     if (!jobId) return null;
 
     return (
+        <>
+            {showFlowTree && (
+                <FlowTreeModal
+                    jobId={jobId}
+                    jobName={job?.name}
+                    onClose={() => setShowFlowTree(false)}
+                />
+            )}
         <aside
             className="fixed top-0 right-0 h-full w-100 flex flex-col z-50"
             style={{
@@ -187,7 +213,7 @@ export default function JobDrawer({
                                     Duration
                                 </p>
                                 <p style={{ color: "var(--color-on-surface)" }}>
-                                    {job.timing.duration}
+                                    {job.timing.duration !== null ? `${job.timing.duration} ms` : "-"}
                                 </p>
                             </div>
 
@@ -200,9 +226,37 @@ export default function JobDrawer({
                                 >
                                     Created
                                 </p>
-                                <p style={{ color: "var(--color-on-surface)" }}>
-                                    {job.timing.createdAt}
+                                <div style={{ color: "var(--color-on-surface)" }}>
+                                    {renderTimestamp(job.timing.createdAt)}
+                                </div>
+                            </div>
+
+                            <div>
+                                <p
+                                    className="text-xs mb-1"
+                                    style={{
+                                        color: "var(--color-on-surface-variant)",
+                                    }}
+                                >
+                                    Processed
                                 </p>
+                                <div style={{ color: "var(--color-on-surface)" }}>
+                                    {renderTimestamp(job.timing.processedAt)}
+                                </div>
+                            </div>
+
+                            <div>
+                                <p
+                                    className="text-xs mb-1"
+                                    style={{
+                                        color: "var(--color-on-surface-variant)",
+                                    }}
+                                >
+                                    Finished
+                                </p>
+                                <div style={{ color: "var(--color-on-surface)" }}>
+                                    {renderTimestamp(job.timing.finishedAt)}
+                                </div>
                             </div>
                         </div>
 
@@ -389,6 +443,7 @@ export default function JobDrawer({
                 </button>
             </div>
         </aside>
+        </>
     );
 }
 

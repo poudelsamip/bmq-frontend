@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { Job } from "../../api/queue.api";
 import { queueApi } from "../../api/queue.api";
 import StatusBadge from "../ui/StatusBadge";
+import { formatDateTime } from "../../utils/date";
 
 export const JobRow = ({
     job,
@@ -109,14 +110,14 @@ export const JobRow = ({
                 className="px-4 py-3 text-sm"
                 style={{ color: "var(--color-on-surface-variant)" }}
             >
-                {job.duration}
+                {job.duration !== null && job.duration !== undefined ? `${job.duration} ms` : "-"}
             </td>
 
             <td
                 className="px-4 py-3 text-sm"
                 style={{ color: "var(--color-on-surface-variant)" }}
             >
-                {job.processedOn}
+                {formatDateTime(job.processedOn)}
             </td>
 
             {/* Actions cell */}

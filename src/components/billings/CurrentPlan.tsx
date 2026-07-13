@@ -1,4 +1,19 @@
+import { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext";
+import { projectApi } from "../../api/projects.api";
+
 export default function CurrentPlan() {
+    const { user } = useAuth();
+    const [projectCount, setProjectCount] = useState(0);
+
+    useEffect(() => {
+        projectApi.getAll().then(res => setProjectCount(res.data.length)).catch(console.error);
+    }, []);
+
+    const planName = user?.plan === "pro" ? "Pro Tier" : "Free Tier";
+    const planLimit = user?.plan === "pro" ? 5 : 2;
+    const usagePercent = Math.round((projectCount / planLimit) * 100);
+
     return (
         <section
             className="flex flex-col md:flex-row justify-between md:items-end gap-6 rounded-sm"
@@ -33,7 +48,7 @@ export default function CurrentPlan() {
                         margin: 0,
                     }}
                 >
-                    Free Tier
+                    {planName}
                 </h3>
                 <p
                     style={{
@@ -42,7 +57,7 @@ export default function CurrentPlan() {
                         margin: 0,
                     }}
                 >
-                    Your current billing cycle ends on Oct 12, 2023.
+                    Your current billing cycle ends on {new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}.
                 </p>
             </div>
 
@@ -52,8 +67,8 @@ export default function CurrentPlan() {
                 style={{ maxWidth: 448, display: "flex", flexDirection: "column", gap: 8 }}
             >
                 <div className="flex justify-between" style={{ fontSize: 13, fontWeight: 600 }}>
-                    <span style={{ color: "var(--color-on-surface)" }}>Projects: 2 / 5</span>
-                    <span style={{ color: "var(--color-on-surface-variant)" }}>40% used</span>
+                    <span style={{ color: "var(--color-on-surface)" }}>Projects: {projectCount} / {planLimit}</span>
+                    <span style={{ color: "var(--color-on-surface-variant)" }}>{usagePercent}% used</span>
                 </div>
                 <div
                     className="w-full overflow-hidden rounded-full"
@@ -65,7 +80,7 @@ export default function CurrentPlan() {
                     <div
                         className="h-full rounded-full transition-all duration-500"
                         style={{
-                            width: "40%",
+                            width: `${usagePercent}%`,
                             backgroundColor: "var(--color-primary-container)",
                         }}
                     />

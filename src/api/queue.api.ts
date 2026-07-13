@@ -82,6 +82,19 @@ export interface JobDetails {
     logs: string[];
 }
 
+// ── Flow Tree types ───────────────────────────────────────────────────────────
+
+export interface FlowTreeNode {
+    id: string;
+    name: string;
+    queueName: string;
+    status: string;
+    failedReason?: string;
+    attemptsMade: number;
+    timestamp: number;
+    children: FlowTreeNode[];
+}
+
 // ── New types for Tier 1 features ─────────────────────────────────────────────
 
 export interface RetryJobOutcome {
@@ -136,11 +149,13 @@ export const queueApi = {
     },
 
     streamEventSource: (projectId: string, queueName: string) => {
-        return `http://localhost:3000/api/project/${projectId}/queues/${queueName}/stream`;
+        const BASE = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+        return `${BASE}/project/${projectId}/queues/${queueName}/stream`;
     },
 
     streamAllEventSource: (projectId: string) => {
-        return `http://localhost:3000/api/project/${projectId}/queues/stream`;
+        const BASE = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+        return `${BASE}/project/${projectId}/queues/stream`;
     },
 
     retryJob: async (projectId: string, queueName: string, jobId: string) => {
@@ -226,4 +241,16 @@ export const queueApi = {
         );
         return response.data;
     },
+
+    getFlowTree: async (
+        projectId: string,
+        queueName: string,
+        jobId: string,
+    ) => {
+        const response = await api.get<ApiResponse<FlowTreeNode>>(
+            `/project/${projectId}/queues/${queueName}/jobs/${jobId}/flow-tree`,
+        );
+        return response.data;
+    },
+
 };

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { projectApi, type AllProjects } from "../api/projects.api";
+import { useAuth } from "../context/AuthContext";
 import PlanUsageBanner from "../components/dashboard/PlanUsageBanner";
 import { useNavigate } from "react-router-dom";
 import ProjectCard from "../components/dashboard/ProjectCard";
@@ -9,6 +10,9 @@ import InfraGraph from "../components/dashboard/InfraGraph";
 
 export default function ProjectsPage() {
     const navigate = useNavigate();
+    const { user } = useAuth();
+    
+    const planLimit = user?.plan === "pro" ? 5 : 2;
 
     const [projects, setProjects] = useState<AllProjects[]>([]);
     const [showModal, setShowModal] = useState(false);
@@ -22,8 +26,13 @@ export default function ProjectsPage() {
         navigate(`/dashboard/projects/${id}`);
     };
 
-    const onMenuClick = (id: string) => {
-        console.log("Menu for", id);
+    const onDeleteProject = async (id: string) => {
+        try {
+            await projectApi.deleteProject(id);
+            getProjects();
+        } catch (error) {
+            console.error("Error deleting project:", error);
+        }
     };
 
     const onCreateProject = () => {
@@ -61,7 +70,7 @@ export default function ProjectsPage() {
             {/* Plan usage slim bar */}
             <PlanUsageBanner
                 used={projects.length}
-                total={5}
+                total={planLimit}
                 onUpgrade={() => navigate("/dashboard/billing")}
             />
 
@@ -78,7 +87,7 @@ export default function ProjectsPage() {
                         key={project.id}
                         project={project}
                         onNavigate={onNavigate}
-                        onMenuClick={onMenuClick}
+                        onDelete={onDeleteProject}
                     />
                 ))}
                 <CreateProjectCard onCreate={onCreateProject} />
