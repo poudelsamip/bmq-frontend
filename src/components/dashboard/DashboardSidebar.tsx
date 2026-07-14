@@ -28,11 +28,16 @@ export default function DashboardSidebar() {
                 <div className="flex items-center gap-3">
                     <div
                         className="w-8 h-8 rounded-xs flex items-center justify-center shrink-0"
-                        style={{ backgroundColor: "var(--color-primary-container)" }}
+                        style={{
+                            backgroundColor: "var(--color-primary-container)",
+                        }}
                     >
                         <span
                             className="material-symbols-outlined text-sm"
-                            style={{ color: "var(--color-on-primary-container)", fontSize: 18 }}
+                            style={{
+                                color: "var(--color-on-primary-container)",
+                                fontSize: 18,
+                            }}
                         >
                             bolt
                         </span>
@@ -46,7 +51,7 @@ export default function DashboardSidebar() {
                                 color: "var(--color-primary)",
                             }}
                         >
-                            Bull Vortex
+                            Bull Console
                         </h1>
                         <span
                             className="uppercase tracking-widest"
@@ -64,7 +69,10 @@ export default function DashboardSidebar() {
             </div>
 
             {/* Nav */}
-            <nav className="flex-1" style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <nav
+                className="flex-1"
+                style={{ display: "flex", flexDirection: "column", gap: 2 }}
+            >
                 {navItems.map(({ label, icon, to, end }) => (
                     <NavLink
                         key={label}
@@ -74,9 +82,11 @@ export default function DashboardSidebar() {
                         style={({ isActive }) =>
                             isActive
                                 ? {
-                                      borderLeft: "4px solid var(--color-primary)",
+                                      borderLeft:
+                                          "4px solid var(--color-primary)",
                                       color: "var(--color-primary)",
-                                      backgroundColor: "rgba(183, 196, 255, 0.10)",
+                                      backgroundColor:
+                                          "rgba(183, 196, 255, 0.10)",
                                       paddingLeft: "12px",
                                       paddingRight: "16px",
                                   }
@@ -90,7 +100,8 @@ export default function DashboardSidebar() {
                             const el = e.currentTarget as HTMLElement;
                             if (!el.classList.contains("active")) {
                                 el.style.color = "var(--color-on-surface)";
-                                el.style.backgroundColor = "var(--color-surface-container-high)";
+                                el.style.backgroundColor =
+                                    "var(--color-surface-container-high)";
                             }
                         }}
                         onMouseLeave={(e) => {
@@ -113,7 +124,12 @@ export default function DashboardSidebar() {
             </nav>
 
             {/* Profile at bottom */}
-            <div style={{ borderTop: "1px solid var(--color-outline-variant)", paddingTop: 16 }}>
+            <div
+                style={{
+                    borderTop: "1px solid var(--color-outline-variant)",
+                    paddingTop: 16,
+                }}
+            >
                 <NavLink
                     to="/dashboard/profile"
                     className="flex items-center gap-3 py-3 text-sm font-medium transition-colors duration-150 outline-none"
@@ -136,7 +152,8 @@ export default function DashboardSidebar() {
                         const el = e.currentTarget as HTMLElement;
                         if (!el.getAttribute("aria-current")) {
                             el.style.color = "var(--color-on-surface)";
-                            el.style.backgroundColor = "var(--color-surface-container-high)";
+                            el.style.backgroundColor =
+                                "var(--color-surface-container-high)";
                         }
                     }}
                     onMouseLeave={(e) => {
@@ -147,7 +164,10 @@ export default function DashboardSidebar() {
                         }
                     }}
                 >
-                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                    <span
+                        className="material-symbols-outlined"
+                        style={{ fontSize: 20 }}
+                    >
                         account_circle
                     </span>
                     <span style={{ fontSize: 14 }}>Profile</span>

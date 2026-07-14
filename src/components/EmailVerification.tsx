@@ -18,7 +18,7 @@ interface EmailVerificationProps {
 
 export default function EmailVerification({
     email,
-    title    = "Verify your email",
+    title = "Verify your email",
     subtitle = "A 6-digit verification code has been sent to your email",
 
     onVerify,
@@ -27,12 +27,12 @@ export default function EmailVerification({
     onBack,
 
     showBackButton = false,
-    showAppHeader  = true,
+    showAppHeader = true,
 }: EmailVerificationProps) {
-    const [otp,       setOtp]       = useState("");
-    const [error,     setError]     = useState<string | null>(null);
+    const [otp, setOtp] = useState("");
+    const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [cooldown,  setCooldown]  = useState(0);
+    const [cooldown, setCooldown] = useState(0);
 
     useEffect(() => {
         if (cooldown > 0) {
@@ -91,15 +91,26 @@ export default function EmailVerification({
                         <div className="flex items-center gap-2.5 mb-2">
                             <div
                                 className="w-9 h-9 rounded-sm flex items-center justify-center"
-                                style={{ background: "var(--color-primary-container)" }}
+                                style={{
+                                    background:
+                                        "var(--color-primary-container)",
+                                }}
                             >
-                                <Boxes size={20} style={{ color: "var(--color-on-primary-container)" }} />
+                                <Boxes
+                                    size={20}
+                                    style={{
+                                        color: "var(--color-on-primary-container)",
+                                    }}
+                                />
                             </div>
                             <h1
                                 className="text-xl font-semibold tracking-tight"
-                                style={{ color: "var(--color-on-surface)", fontFamily: "Manrope, sans-serif" }}
+                                style={{
+                                    color: "var(--color-on-surface)",
+                                    fontFamily: "Manrope, sans-serif",
+                                }}
                             >
-                                Bull Vortex
+                                Bull Console
                             </h1>
                         </div>
                     </header>
@@ -111,8 +122,14 @@ export default function EmailVerification({
                         onClick={onBack}
                         className="text-sm mb-4 text-left transition-colors duration-150"
                         style={{ color: "var(--color-on-surface-variant)" }}
-                        onMouseOver={e => (e.currentTarget.style.color = "var(--color-primary)")}
-                        onMouseOut={e => (e.currentTarget.style.color = "var(--color-on-surface-variant)")}
+                        onMouseOver={(e) =>
+                            (e.currentTarget.style.color =
+                                "var(--color-primary)")
+                        }
+                        onMouseOut={(e) =>
+                            (e.currentTarget.style.color =
+                                "var(--color-on-surface-variant)")
+                        }
                     >
                         ← Back
                     </button>
@@ -125,12 +142,20 @@ export default function EmailVerification({
                         className="w-12 h-12 rounded-sm flex items-center justify-center mb-4"
                         style={{ background: "var(--color-primary-container)" }}
                     >
-                        <MailCheck size={24} style={{ color: "var(--color-on-primary-container)" }} />
+                        <MailCheck
+                            size={24}
+                            style={{
+                                color: "var(--color-on-primary-container)",
+                            }}
+                        />
                     </div>
 
                     <h2
                         className="text-lg font-semibold mb-1"
-                        style={{ color: "var(--color-on-surface)", fontFamily: "Manrope, sans-serif" }}
+                        style={{
+                            color: "var(--color-on-surface)",
+                            fontFamily: "Manrope, sans-serif",
+                        }}
                     >
                         {title}
                     </h2>
@@ -141,7 +166,9 @@ export default function EmailVerification({
                     >
                         {subtitle}
                         <br />
-                        <strong style={{ color: "var(--color-primary)" }}>{email}</strong>
+                        <strong style={{ color: "var(--color-primary)" }}>
+                            {email}
+                        </strong>
                     </p>
 
                     {/* ── Error banner ── */}
@@ -162,7 +189,7 @@ export default function EmailVerification({
                     <input
                         id="otp-input"
                         value={otp}
-                        onChange={e => setOtp(e.target.value)}
+                        onChange={(e) => setOtp(e.target.value)}
                         maxLength={6}
                         placeholder="Enter code"
                         className="w-full text-center text-lg tracking-[0.35em] rounded-sm py-3 px-4 mb-4 transition-all duration-150 focus:outline-none"
@@ -171,13 +198,15 @@ export default function EmailVerification({
                             color: "var(--color-on-surface)",
                             border: "1px solid var(--color-outline-variant)",
                         }}
-                        onFocus={e => {
-                            e.currentTarget.style.borderColor = "var(--color-primary)";
+                        onFocus={(e) => {
+                            e.currentTarget.style.borderColor =
+                                "var(--color-primary)";
                             e.currentTarget.style.boxShadow =
                                 "0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent)";
                         }}
-                        onBlur={e => {
-                            e.currentTarget.style.borderColor = "var(--color-outline-variant)";
+                        onBlur={(e) => {
+                            e.currentTarget.style.borderColor =
+                                "var(--color-outline-variant)";
                             e.currentTarget.style.boxShadow = "none";
                         }}
                     />
@@ -192,8 +221,15 @@ export default function EmailVerification({
                             background: "var(--color-primary)",
                             color: "var(--color-on-primary)",
                         }}
-                        onMouseOver={e => { if (!isLoading) e.currentTarget.style.background = "var(--color-primary-fixed)"; }}
-                        onMouseOut={e => { e.currentTarget.style.background = "var(--color-primary)"; }}
+                        onMouseOver={(e) => {
+                            if (!isLoading)
+                                e.currentTarget.style.background =
+                                    "var(--color-primary-fixed)";
+                        }}
+                        onMouseOut={(e) => {
+                            e.currentTarget.style.background =
+                                "var(--color-primary)";
+                        }}
                     >
                         {isLoading ? "Verifying..." : "Verify"}
                     </button>
@@ -210,15 +246,21 @@ export default function EmailVerification({
                             disabled={cooldown > 0}
                             className="font-medium transition-colors duration-150 disabled:cursor-not-allowed"
                             style={{
-                                color: cooldown > 0 ? "var(--color-outline)" : "var(--color-primary)",
+                                color:
+                                    cooldown > 0
+                                        ? "var(--color-outline)"
+                                        : "var(--color-primary)",
                             }}
-                            onMouseOver={e => {
+                            onMouseOver={(e) => {
                                 if (cooldown === 0)
-                                    e.currentTarget.style.color = "var(--color-primary-fixed)";
+                                    e.currentTarget.style.color =
+                                        "var(--color-primary-fixed)";
                             }}
-                            onMouseOut={e => {
+                            onMouseOut={(e) => {
                                 e.currentTarget.style.color =
-                                    cooldown > 0 ? "var(--color-outline)" : "var(--color-primary)";
+                                    cooldown > 0
+                                        ? "var(--color-outline)"
+                                        : "var(--color-primary)";
                             }}
                         >
                             {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend"}

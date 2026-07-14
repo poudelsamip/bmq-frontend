@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
 
-const NAV_LINKS = ["Features", "How It Works", "Pricing", "Docs"];
+const NAV_LINKS = ["Features", "How It Works", "Pricing"];
 
 const FEATURES = [
     {
@@ -126,48 +127,33 @@ const PLANS = [
         name: "Free",
         price: "$0",
         period: "/month",
-        desc: "Try it with your first project. No credit card.",
-        cta: "Start Free",
+        desc: "Essential monitoring tools for personal projects and getting started.",
+        cta: "Current Plan",
         featured: false,
         perks: [
-            "1 Redis connection",
-            "Unlimited queues",
-            "Last 100 jobs visible",
-            "Real-time SSE updates",
-            "Retry & delete actions",
-            "Flow tree visualization",
+            "2 Projects",
+            "Last 30 Jobs",
+            "Live Queue Dashboard",
+            "Basic Queue Analytics",
+            "Standard Support",
         ],
     },
     {
         name: "Pro",
-        price: "$9",
+        price: "$9.99",
         period: "/month",
-        desc: "For developers who need more coverage.",
-        cta: "Start Pro",
+        desc: "Everything you need to monitor, debug, and optimize your BullMQ workloads in production.",
+        cta: "Upgrade to Pro",
         featured: true,
         perks: [
-            "5 Redis connections",
-            "Unlimited queues",
-            "Last 1,000 jobs visible",
-            "Real-time SSE updates",
-            "Retry & delete actions",
-            "Flow tree visualization",
-        ],
-    },
-    {
-        name: "Team",
-        price: "$29",
-        period: "/month",
-        desc: "For teams managing multiple environments.",
-        cta: "Coming Soon",
-        featured: false,
-        perks: [
-            "20 Redis connections",
-            "Unlimited queues",
-            "Last 10,000 jobs visible",
-            "Real-time SSE updates",
-            "Retry & delete actions",
-            "5 team members",
+            "Unlimited Projects",
+            "Complete Job History",
+            "Interactive Flow Tree Visualization",
+            "Advanced Queue Analytics",
+            "Failure Analytics & Insights",
+            "Email Alerts for Failed Jobs",
+            "Queue Health Monitoring",
+            "Priority Support",
         ],
     },
 ];
@@ -469,7 +455,7 @@ function MockDashboard() {
                     }}
                 />
                 <span style={{ marginLeft: 8, fontSize: 11, color: "#3d4e6a" }}>
-                    bullvortex.io/dashboard/my-app
+                    bullconsole.com/dashboard
                 </span>
                 <span
                     style={{
@@ -620,7 +606,7 @@ const STEPS = [
     {
         num: "01",
         title: "Connect your Redis",
-        body: "Paste your Redis URL into Bull Vortex. We encrypt it with AES-256-GCM immediately — raw credentials never touch our database.",
+        body: "Paste your Redis URL into Bull Console. We encrypt it with AES-256-GCM immediately — raw credentials never touch our database.",
         accent: "#818cf8",
     },
     {
@@ -651,6 +637,8 @@ export default function LandingPage() {
         window.addEventListener("scroll", onScroll);
         return () => window.removeEventListener("scroll", onScroll);
     }, []);
+
+    const { isAuthenticated, isLoading } = useAuth();
 
     const D = {
         bg: "#080b12",
@@ -727,7 +715,7 @@ export default function LandingPage() {
                             letterSpacing: "-0.02em",
                         }}
                     >
-                        <div
+                        {/* <div
                             style={{
                                 width: 26,
                                 height: 26,
@@ -751,8 +739,13 @@ export default function LandingPage() {
                                     fillOpacity=".9"
                                 />
                             </svg>
-                        </div>
-                        Bull Vortex
+                        </div> */}
+                        <img
+                            src="/bull_console.png"
+                            alt="Bull Console"
+                            style={{ width: 36, height: 36, borderRadius: 10 }}
+                        />
+                        Bull Console
                     </div>
                     <div style={{ flex: 1 }} />
                     <div
@@ -779,19 +772,23 @@ export default function LandingPage() {
                             alignItems: "center",
                         }}
                     >
-                        <a
+                        {/* <a
                             href="#"
                             className="nav-link"
                             style={{ marginRight: 4 }}
                         >
                             Log in
-                        </a>
+                        </a> */}
                         <a
-                            href="#"
+                            href={
+                                !isLoading && isAuthenticated
+                                    ? "/dashboard"
+                                    : "/auth"
+                            }
                             className="btn-primary"
                             style={{ fontSize: 13, padding: "8px 16px" }}
                         >
-                            Get Started Free
+                            Continue
                         </a>
                     </div>
                 </div>
@@ -859,8 +856,8 @@ export default function LandingPage() {
                                 fontWeight: 500,
                             }}
                         >
-                            Flow tree visualization — the only BullMQ SaaS that
-                            has it
+                            Flow tree visualization — the only BullMQ Service
+                            that has it
                         </span>
                     </div>
                     <h1
@@ -900,7 +897,7 @@ export default function LandingPage() {
                         }}
                     >
                         <a
-                            href="#"
+                            href="/auth"
                             className="btn-primary"
                             style={{ fontSize: 15, padding: "13px 28px" }}
                         >
@@ -1176,7 +1173,7 @@ export default function LandingPage() {
                                 marginBottom: 20,
                             }}
                         >
-                            BullMQ supports parent-child job flows. Bull Vortex
+                            BullMQ supports parent-child job flows. Bull Console
                             renders this as an interactive tree so you can trace
                             exactly where a workflow broke.
                         </p>
@@ -1394,7 +1391,7 @@ export default function LandingPage() {
             </section>
 
             {/* VS COMPARISON */}
-            <section
+            {/* <section
                 style={{
                     padding: "80px 24px",
                     background: D.surface2,
@@ -1436,7 +1433,7 @@ export default function LandingPage() {
                             }}
                         >
                             They're self-hosted npm packages you install into
-                            your codebase. Bull Vortex is a managed service —
+                            your codebase. Bull Console is a managed service —
                             zero installation, zero maintenance.
                         </p>
                     </div>
@@ -1481,7 +1478,7 @@ export default function LandingPage() {
                                                 "'JetBrains Mono', monospace",
                                         }}
                                     >
-                                        Bull Vortex
+                                        Bull Console
                                     </th>
                                     <th
                                         style={{
@@ -1571,10 +1568,11 @@ export default function LandingPage() {
                         </table>
                     </div>
                 </div>
-            </section>
+            </section> */}
 
             {/* SECURITY SECTION */}
             <section
+                id="security"
                 style={{
                     padding: "80px 24px",
                     borderTop: `1px solid ${D.border}`,
@@ -1639,22 +1637,12 @@ export default function LandingPage() {
                             {
                                 icon: "🔐",
                                 label: "AES-256-GCM encryption",
-                                sub: "Redis URLs encrypted at rest, separate key per account",
+                                sub: "Redis URLs encrypted at rest, Only decrypted in memory during request processing",
                             },
                             {
                                 icon: "👁",
                                 label: "Read-only access",
                                 sub: "We only write when you explicitly retry or delete a job",
-                            },
-                            {
-                                icon: "🍪",
-                                label: "httpOnly cookies",
-                                sub: "Refresh tokens in Secure, SameSite=Strict cookies only",
-                            },
-                            {
-                                icon: "🚫",
-                                label: "No localStorage",
-                                sub: "Access JWTs live in React memory — never persisted",
                             },
                         ].map((s) => (
                             <div
@@ -1740,8 +1728,8 @@ export default function LandingPage() {
                             Simple, honest pricing
                         </h2>
                         <p style={{ fontSize: 14, color: "#64748b" }}>
-                            $9/month is low enough to expense without a meeting.
-                            Start free, upgrade when you see the value.
+                            $9.99/month is low enough to expense without a
+                            meeting. Start free, upgrade when you see the value.
                         </p>
                     </div>
                     <div
@@ -1975,7 +1963,7 @@ export default function LandingPage() {
                         no installs, no infrastructure.
                     </p>
                     <a
-                        href="#"
+                        href="/auth"
                         className="btn-primary"
                         style={{ fontSize: 15, padding: "13px 32px" }}
                     >
@@ -2023,45 +2011,29 @@ export default function LandingPage() {
                             color: D.text,
                         }}
                     >
-                        <div
-                            style={{
-                                width: 22,
-                                height: 22,
-                                background:
-                                    "linear-gradient(135deg, #6366f1, #8b5cf6)",
-                                borderRadius: 3,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                            }}
-                        >
-                            <svg
-                                width="12"
-                                height="12"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"
-                                    fill="#fff"
-                                    fillOpacity=".9"
-                                />
-                            </svg>
-                        </div>
-                        Bull Vortex
+                        <img
+                            src="/bull_console.png"
+                            alt="Bull Console"
+                            style={{ width: 36, height: 36, borderRadius: 10 }}
+                        />
+                        Bull Console
                     </div>
                     <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
-                        {["Privacy", "Terms", "Security", "Docs"].map((l) => (
+                        {[
+                            { label: "Privacy", url: "/privacy" },
+                            { label: "Terms", url: "/terms" },
+                            { label: "Security", url: "#security" },
+                        ].map((l) => (
                             <a
-                                key={l}
-                                href="#"
+                                key={l.label}
+                                href={l.url}
                                 style={{
                                     fontSize: 12,
                                     color: D.muted,
                                     textDecoration: "none",
                                 }}
                             >
-                                {l}
+                                {l.label}
                             </a>
                         ))}
                     </div>
@@ -2073,7 +2045,7 @@ export default function LandingPage() {
                             fontFamily: "'JetBrains Mono', monospace",
                         }}
                     >
-                        © 2026 Bull Vortex | All rights reserved
+                        © 2026 Bull Console | All rights reserved
                     </p>
                 </div>
             </footer>

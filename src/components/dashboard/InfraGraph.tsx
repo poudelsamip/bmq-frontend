@@ -2,7 +2,10 @@ export default function InfraGraph() {
     return (
         <section style={{ marginTop: 80 }}>
             {/* Section heading with rule */}
-            <div className="flex items-center gap-3" style={{ marginBottom: 32 }}>
+            <div
+                className="flex items-center gap-3"
+                style={{ marginBottom: 32 }}
+            >
                 <span
                     className="uppercase tracking-widest whitespace-nowrap"
                     style={{
@@ -16,7 +19,10 @@ export default function InfraGraph() {
                 </span>
                 <div
                     className="flex-1"
-                    style={{ height: 1, backgroundColor: "var(--color-outline-variant)" }}
+                    style={{
+                        height: 1,
+                        backgroundColor: "var(--color-outline-variant)",
+                    }}
                 />
             </div>
 
@@ -53,14 +59,15 @@ export default function InfraGraph() {
                         className="px-4 py-2 rounded-sm font-medium"
                         style={{
                             border: "1px solid var(--color-outline)",
-                            backgroundColor: "var(--color-surface-container-high)",
+                            backgroundColor:
+                                "var(--color-surface-container-high)",
                             color: "var(--color-on-surface)",
                             fontSize: 13,
                             fontWeight: 500,
                             boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
                         }}
                     >
-                        Bull Vortex Central Hub
+                        Bull Console Central Hub
                     </div>
 
                     {/* Vertical stem */}
@@ -94,7 +101,8 @@ export default function InfraGraph() {
                                 className="px-3 py-1 rounded-sm"
                                 style={{
                                     border: "1px solid var(--color-outline)",
-                                    backgroundColor: "var(--color-surface-container-high)",
+                                    backgroundColor:
+                                        "var(--color-surface-container-high)",
                                     color: "var(--color-on-surface-variant)",
                                     fontSize: 12,
                                     fontFamily: "monospace",
@@ -125,7 +133,8 @@ export default function InfraGraph() {
                                 className="px-3 py-1 rounded-sm"
                                 style={{
                                     border: "1px solid var(--color-outline)",
-                                    backgroundColor: "var(--color-surface-container-high)",
+                                    backgroundColor:
+                                        "var(--color-surface-container-high)",
                                     color: "var(--color-on-surface-variant)",
                                     fontSize: 12,
                                     fontFamily: "monospace",

@@ -6,7 +6,6 @@ import EmailVerification from "../components/EmailVerification";
 import { authApi } from "../api/auth.api";
 import { useAuth } from "../context/AuthContext";
 
-
 /* ── reusable dark-mode field helper ──────────────────────────── */
 function Field({
     id,
@@ -48,7 +47,7 @@ function Field({
                     id={id}
                     type={type}
                     value={value}
-                    onChange={e => onChange(e.target.value)}
+                    onChange={(e) => onChange(e.target.value)}
                     onKeyDown={onKeyDown}
                     placeholder={placeholder}
                     autoComplete={autoComplete}
@@ -58,13 +57,15 @@ function Field({
                         color: "var(--color-on-surface)",
                         border: "1px solid var(--color-outline-variant)",
                     }}
-                    onFocus={e => {
-                        e.currentTarget.style.borderColor = "var(--color-primary)";
+                    onFocus={(e) => {
+                        e.currentTarget.style.borderColor =
+                            "var(--color-primary)";
                         e.currentTarget.style.boxShadow =
                             "0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent)";
                     }}
-                    onBlur={e => {
-                        e.currentTarget.style.borderColor = "var(--color-outline-variant)";
+                    onBlur={(e) => {
+                        e.currentTarget.style.borderColor =
+                            "var(--color-outline-variant)";
                         e.currentTarget.style.boxShadow = "none";
                     }}
                 />
@@ -75,16 +76,16 @@ function Field({
 
 /* ── SignupPage ────────────────────────────────────────────────── */
 export default function SignupPage() {
-    const [fullName,         setFullName]         = useState("");
-    const [email,            setEmail]            = useState("");
-    const [password,         setPassword]         = useState("");
-    const [confirmPassword,  setConfirmPassword]  = useState("");
-    const [error,            setError]            = useState<string | null>(null);
-    const [isLoading,        setIsLoading]        = useState(false);
+    const [fullName, setFullName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
     const [showVerification, setShowVerification] = useState(false);
 
-    const { login }  = useAuth();
-    const navigate   = useNavigate();
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
     const handleSignup = async () => {
         if (!fullName.trim() || !email.trim() || !password) {
@@ -165,25 +166,38 @@ export default function SignupPage() {
                     <div className="flex items-center gap-2.5 mb-2">
                         <div
                             className="flex items-center justify-center w-9 h-9 rounded-sm"
-                            style={{ background: "var(--color-primary-container)" }}
+                            style={{
+                                background: "var(--color-primary-container)",
+                            }}
                         >
-                            <Boxes size={20} style={{ color: "var(--color-on-primary-container)" }} />
+                            <Boxes
+                                size={20}
+                                style={{
+                                    color: "var(--color-on-primary-container)",
+                                }}
+                            />
                         </div>
                         <h1
                             className="text-xl font-semibold tracking-tight"
-                            style={{ color: "var(--color-on-surface)", fontFamily: "Manrope, sans-serif" }}
+                            style={{
+                                color: "var(--color-on-surface)",
+                                fontFamily: "Manrope, sans-serif",
+                            }}
                         >
-                            Bull Vortex
+                            Bull Console
                         </h1>
                     </div>
-                    <p className="text-sm" style={{ color: "var(--color-on-surface-variant)" }}>
+                    <p
+                        className="text-sm"
+                        style={{ color: "var(--color-on-surface-variant)" }}
+                    >
                         Create your account
                     </p>
                 </header>
 
                 <div className="flex flex-col gap-4">
                     {/* ── Error banner ── */}
-                    {error && (
+                    {/* {error && (
                         <div
                             className="text-sm p-3 rounded-sm"
                             style={{
@@ -194,9 +208,9 @@ export default function SignupPage() {
                         >
                             {error}
                         </div>
-                    )}
+                    )} */}
 
-                    <Field
+                    {/* <Field
                         id="fullName"
                         label="Full name"
                         type="text"
@@ -242,10 +256,10 @@ export default function SignupPage() {
                         placeholder="••••••••"
                         autoComplete="new-password"
                         icon={Lock}
-                    />
+                    /> */}
 
                     {/* ── Primary CTA ── */}
-                    <button
+                    {/* <button
                         id="signup-btn"
                         onClick={handleSignup}
                         disabled={isLoading}
@@ -254,55 +268,98 @@ export default function SignupPage() {
                             background: "var(--color-primary)",
                             color: "var(--color-on-primary)",
                         }}
-                        onMouseOver={e => { if (!isLoading) e.currentTarget.style.background = "var(--color-primary-fixed)"; }}
-                        onMouseOut={e => { e.currentTarget.style.background = "var(--color-primary)"; }}
+                        onMouseOver={(e) => {
+                            if (!isLoading)
+                                e.currentTarget.style.background =
+                                    "var(--color-primary-fixed)";
+                        }}
+                        onMouseOut={(e) => {
+                            e.currentTarget.style.background =
+                                "var(--color-primary)";
+                        }}
                     >
                         {isLoading ? "Creating account..." : "Sign up"}
-                    </button>
+                    </button> */}
 
                     {/* ── Divider ── */}
-                    <div className="relative flex items-center py-1">
-                        <div className="grow border-t" style={{ borderColor: "var(--color-outline-variant)" }} />
-                        <span className="mx-3 text-xs" style={{ color: "var(--color-on-surface-variant)" }}>or</span>
-                        <div className="grow border-t" style={{ borderColor: "var(--color-outline-variant)" }} />
-                    </div>
+                    {/* <div className="relative flex items-center py-1">
+                        <div
+                            className="grow border-t"
+                            style={{
+                                borderColor: "var(--color-outline-variant)",
+                            }}
+                        />
+                        <span
+                            className="mx-3 text-xs"
+                            style={{ color: "var(--color-on-surface-variant)" }}
+                        >
+                            or
+                        </span>
+                        <div
+                            className="grow border-t"
+                            style={{
+                                borderColor: "var(--color-outline-variant)",
+                            }}
+                        />
+                    </div> */}
 
                     {/* ── Social buttons ── */}
                     <button
                         id="google-signup-btn"
-                        onClick={() => { window.location.href = "http://localhost:3000/api/auth/google"; }}
+                        onClick={() => {
+                            window.location.href =
+                                "http://localhost:3000/api/auth/google";
+                        }}
                         className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm font-medium rounded-sm transition-all duration-150 active:scale-[0.98]"
                         style={{
                             background: "var(--color-surface-container)",
                             color: "var(--color-on-surface)",
                             border: "1px solid var(--color-outline-variant)",
                         }}
-                        onMouseOver={e => { e.currentTarget.style.background = "var(--color-surface-container-high)"; }}
-                        onMouseOut={e => { e.currentTarget.style.background = "var(--color-surface-container)"; }}
+                        onMouseOver={(e) => {
+                            e.currentTarget.style.background =
+                                "var(--color-surface-container-high)";
+                        }}
+                        onMouseOut={(e) => {
+                            e.currentTarget.style.background =
+                                "var(--color-surface-container)";
+                        }}
                     >
                         <GoogleIcon /> Continue with Google
                     </button>
 
                     <button
                         id="github-signup-btn"
-                        onClick={() => { window.location.href = "http://localhost:3000/api/auth/github"; }}
+                        onClick={() => {
+                            window.location.href =
+                                "http://localhost:3000/api/auth/github";
+                        }}
                         className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm font-medium rounded-sm transition-all duration-150 active:scale-[0.98]"
                         style={{
                             background: "var(--color-surface-container)",
                             color: "var(--color-on-surface)",
                             border: "1px solid var(--color-outline-variant)",
                         }}
-                        onMouseOver={e => { e.currentTarget.style.background = "var(--color-surface-container-high)"; }}
-                        onMouseOut={e => { e.currentTarget.style.background = "var(--color-surface-container)"; }}
+                        onMouseOver={(e) => {
+                            e.currentTarget.style.background =
+                                "var(--color-surface-container-high)";
+                        }}
+                        onMouseOut={(e) => {
+                            e.currentTarget.style.background =
+                                "var(--color-surface-container)";
+                        }}
                     >
                         <div className="bg-white rounded-full">
-                            <GitHubIcon /> 
+                            <GitHubIcon />
                         </div>
                         Continue with GitHub
                     </button>
 
                     {/* ── Footer ── */}
-                    <p className="text-center text-xs" style={{ color: "var(--color-on-surface-variant)" }}>
+                    {/* <p
+                        className="text-center text-xs"
+                        style={{ color: "var(--color-on-surface-variant)" }}
+                    >
                         Already have an account?{" "}
                         <Link
                             to="/login"
@@ -311,7 +368,7 @@ export default function SignupPage() {
                         >
                             Login
                         </Link>
-                    </p>
+                    </p> */}
                 </div>
             </main>
         </div>
