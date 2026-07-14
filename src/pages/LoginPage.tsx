@@ -1,20 +1,20 @@
-import { useState, type KeyboardEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Boxes, Mail, Lock } from "lucide-react";
+// import { useState, type KeyboardEvent } from "react";
+import { Link /*, useNavigate*/ } from "react-router-dom";
+import { Boxes /*, Mail, Lock*/ } from "lucide-react";
 import { GoogleIcon, GitHubIcon } from "../components/SocialIcons";
-import EmailVerification from "../components/EmailVerification";
-import { authApi } from "../api/auth.api";
-import { useAuth } from "../context/AuthContext";
+// import EmailVerification from "../components/EmailVerification";
+// import { authApi } from "../api/auth.api";
+// import { useAuth } from "../context/AuthContext";
 
 export default function LoginPage() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    // const [email, setEmail] = useState("");
+    // const [password, setPassword] = useState("");
+    // const [error, setError] = useState<string | null>(null);
+    // const [isLoading, setIsLoading] = useState(false);
     // const [pendingEmail, setPendingEmail] = useState<string | null>(null);
 
-    const { login } = useAuth();
-    const navigate = useNavigate();
+    // const { login } = useAuth();
+    // const navigate = useNavigate();
 
     // const handleLogin = async () => {
     //     if (!email.trim() || !password) {

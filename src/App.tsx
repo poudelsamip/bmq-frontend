@@ -3,7 +3,7 @@ import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
-import SignupPage from "./pages/SignupPage";
+// import SignupPage from "./pages/SignupPage";
 import OAuthCallbackPage from "./pages/OAuthCallbackPage";
 import DashboardLayout from "./pages/DashboardLayout";
 import ProjectsPage from "./pages/ProjectsPage";

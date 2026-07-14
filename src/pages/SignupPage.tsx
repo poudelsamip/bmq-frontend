@@ -1,13 +1,13 @@
-import { useState, type KeyboardEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Boxes, User, Mail, Lock } from "lucide-react";
+import { useState /*, type KeyboardEvent */ } from "react";
+import { /* Link, */ useNavigate } from "react-router-dom";
+import { Boxes /*, User, Mail, Lock */ } from "lucide-react";
 import { GoogleIcon, GitHubIcon } from "../components/SocialIcons";
 import EmailVerification from "../components/EmailVerification";
 import { authApi } from "../api/auth.api";
 import { useAuth } from "../context/AuthContext";
 
 /* ── reusable dark-mode field helper ──────────────────────────── */
-function Field({
+/* function Field({
     id,
     label,
     type,
@@ -72,22 +72,22 @@ function Field({
             </div>
         </div>
     );
-}
+} */
 
 /* ── SignupPage ────────────────────────────────────────────────── */
 export default function SignupPage() {
-    const [fullName, setFullName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [error, setError] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    // const [fullName /*, setFullName */] = useState("");
+    const [email /*, setEmail */] = useState("");
+    // const [password /*, setPassword */] = useState("");
+    // const [confirmPassword /*, setConfirmPassword */] = useState("");
+    const [/* error */, setError] = useState<string | null>(null);
+    // const [/* isLoading */, setIsLoading] = useState(false);
     const [showVerification, setShowVerification] = useState(false);
 
     const { login } = useAuth();
     const navigate = useNavigate();
 
-    const handleSignup = async () => {
+    /* const handleSignup = async () => {
         if (!fullName.trim() || !email.trim() || !password) {
             setError("All fields are required.");
             return;
@@ -116,11 +116,11 @@ export default function SignupPage() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }; */
 
-    const onEnter = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") handleSignup();
-    };
+    // const onEnter = (e: KeyboardEvent<HTMLInputElement>) => {
+    //     if (e.key === "Enter") handleSignup();
+    // };
 
     if (showVerification) {
         return (
