@@ -93,34 +93,34 @@ const STATES = [
     },
 ];
 
-const COMPARE = [
-    {
-        feature: "Setup",
-        ours: "Paste Redis URL",
-        board: "Install + configure",
-        arena: "Install + configure",
-    },
-    {
-        feature: "Hosting",
-        ours: "Fully managed",
-        board: "Self-hosted",
-        arena: "Self-hosted",
-    },
-    { feature: "Flow tree", ours: "✓", board: "✗", arena: "✗" },
-    { feature: "Multi-project", ours: "✓", board: "✗", arena: "✗" },
-    {
-        feature: "Code changes",
-        ours: "None",
-        board: "Required",
-        arena: "Required",
-    },
-    {
-        feature: "Live updates",
-        ours: "✓ SSE",
-        board: "Polling",
-        arena: "Polling",
-    },
-];
+// const COMPARE = [
+//     {
+//         feature: "Setup",
+//         ours: "Paste Redis URL",
+//         board: "Install + configure",
+//         arena: "Install + configure",
+//     },
+//     {
+//         feature: "Hosting",
+//         ours: "Fully managed",
+//         board: "Self-hosted",
+//         arena: "Self-hosted",
+//     },
+//     { feature: "Flow tree", ours: "✓", board: "✗", arena: "✗" },
+//     { feature: "Multi-project", ours: "✓", board: "✗", arena: "✗" },
+//     {
+//         feature: "Code changes",
+//         ours: "None",
+//         board: "Required",
+//         arena: "Required",
+//     },
+//     {
+//         feature: "Live updates",
+//         ours: "✓ SSE",
+//         board: "Polling",
+//         arena: "Polling",
+//     },
+// ];
 
 const PLANS = [
     {
