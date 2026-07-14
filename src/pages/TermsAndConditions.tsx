@@ -167,15 +167,15 @@ export default function TermsAndConditions() {
                         style={{ color: "var(--color-on-surface-variant)" }}
                     >
                         You must notify us promptly at{" "}
-                        <a
-                            href="mailto:support@vortex.dev"
+                        <Link
+                            to="mailto:support@vortex.dev"
                             style={{
                                 color: "var(--color-primary)",
                                 textDecoration: "underline",
                             }}
                         >
                             support@vortex.dev
-                        </a>{" "}
+                        </Link>{" "}
                         if you believe your account has been accessed without
                         authorization.
                     </p>
@@ -1406,15 +1406,15 @@ export default function TermsAndConditions() {
                         style={{ color: "var(--color-on-surface)" }}
                     >
                         <strong>Email:</strong>{" "}
-                        <a
-                            href="mailto:support@vortex.dev"
+                        <Link
+                            to="mailto:support@vortex.dev"
                             style={{
                                 color: "var(--color-primary)",
                                 textDecoration: "underline",
                             }}
                         >
                             support@vortex.dev
-                        </a>
+                        </Link>
                     </p>
                 </section>
             </div>

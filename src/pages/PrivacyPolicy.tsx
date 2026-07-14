@@ -593,15 +593,15 @@ export default function PrivacyPolicy() {
                         personal information, or withdraw consent where
                         processing relies on it. You can exercise these rights
                         by contacting{" "}
-                        <a
-                            href="mailto:support@bullconsole.dev"
+                        <Link
+                            to="mailto:support@bullconsole.dev"
                             style={{
                                 color: "var(--color-primary)",
                                 textDecoration: "underline",
                             }}
                         >
                             support@bullconsole.dev
-                        </a>
+                        </Link>
                         ; we may ask for reasonable verification of your
                         identity first.
                     </p>
@@ -653,15 +653,15 @@ export default function PrivacyPolicy() {
                         personal information from children under 16, and if we
                         learn we have, we'll take reasonable steps to delete it
                         promptly. Contact{" "}
-                        <a
-                            href="mailto:support@bullconsole.dev"
+                        <Link
+                            to="mailto:support@bullconsole.dev"
                             style={{
                                 color: "var(--color-primary)",
                                 textDecoration: "underline",
                             }}
                         >
                             support@bullconsole.dev
-                        </a>{" "}
+                        </Link>{" "}
                         if you believe a child has provided us with personal
                         information.
                     </p>
@@ -715,15 +715,15 @@ export default function PrivacyPolicy() {
                         style={{ color: "var(--color-on-surface)" }}
                     >
                         <strong>Email:</strong>{" "}
-                        <a
-                            href="mailto:support@bullconsole.dev"
+                        <Link
+                            to="mailto:support@bullconsole.dev"
                             style={{
                                 color: "var(--color-primary)",
                                 textDecoration: "underline",
                             }}
                         >
                             support@bullconsole.dev
-                        </a>
+                        </Link>
                     </p>
                 </section>
             </div>

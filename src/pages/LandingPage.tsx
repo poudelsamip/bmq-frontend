@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 
@@ -756,13 +757,13 @@ export default function LandingPage() {
                         }}
                     >
                         {NAV_LINKS.map((l) => (
-                            <a
+                            <Link
                                 key={l}
                                 className="nav-link"
-                                href={`#${l.toLowerCase().replace(/ /g, "-")}`}
+                                to={`#${l.toLowerCase().replace(/ /g, "-")}`}
                             >
                                 {l}
-                            </a>
+                            </Link>
                         ))}
                     </div>
                     <div
@@ -772,15 +773,15 @@ export default function LandingPage() {
                             alignItems: "center",
                         }}
                     >
-                        {/* <a
-                            href="#"
+                        {/* <Link
+                            to="#"
                             className="nav-link"
                             style={{ marginRight: 4 }}
                         >
                             Log in
-                        </a> */}
-                        <a
-                            href={
+                        </Link> */}
+                        <Link
+                            to={
                                 !isLoading && isAuthenticated
                                     ? "/dashboard"
                                     : "/auth"
@@ -789,7 +790,7 @@ export default function LandingPage() {
                             style={{ fontSize: 13, padding: "8px 16px" }}
                         >
                             Continue
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </nav>
@@ -896,20 +897,20 @@ export default function LandingPage() {
                             flexWrap: "wrap",
                         }}
                     >
-                        <a
-                            href="/auth"
+                        <Link
+                            to="/auth"
                             className="btn-primary"
                             style={{ fontSize: 15, padding: "13px 28px" }}
                         >
                             Start for free →
-                        </a>
-                        <a
-                            href="#how-it-works"
+                        </Link>
+                        <Link
+                            to="#how-it-works"
                             className="btn-secondary"
                             style={{ fontSize: 15, padding: "13px 28px" }}
                         >
                             See how it works
-                        </a>
+                        </Link>
                     </div>
                     <p
                         style={{
@@ -1815,8 +1816,8 @@ export default function LandingPage() {
                                 >
                                     {plan.desc}
                                 </p>
-                                <a
-                                    href="#"
+                                <Link
+                                    to="#"
                                     style={{
                                         display: "block",
                                         textAlign: "center",
@@ -1844,7 +1845,7 @@ export default function LandingPage() {
                                     }}
                                 >
                                     {plan.cta}
-                                </a>
+                                </Link>
                                 <ul
                                     style={{
                                         listStyle: "none",
@@ -1962,13 +1963,13 @@ export default function LandingPage() {
                         Paste your Redis URL. See your queues. No code changes,
                         no installs, no infrastructure.
                     </p>
-                    <a
-                        href="/auth"
+                    <Link
+                        to="/auth"
                         className="btn-primary"
                         style={{ fontSize: 15, padding: "13px 32px" }}
                     >
                         Get Started Free →
-                    </a>
+                    </Link>
                     <p
                         style={{
                             fontSize: 12,
@@ -2024,9 +2025,9 @@ export default function LandingPage() {
                             { label: "Terms", url: "/terms" },
                             { label: "Security", url: "#security" },
                         ].map((l) => (
-                            <a
+                            <Link
                                 key={l.label}
-                                href={l.url}
+                                to={l.url}
                                 style={{
                                     fontSize: 12,
                                     color: D.muted,
@@ -2034,7 +2035,7 @@ export default function LandingPage() {
                                 }}
                             >
                                 {l.label}
-                            </a>
+                            </Link>
                         ))}
                     </div>
                     <p

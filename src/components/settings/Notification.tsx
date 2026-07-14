@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { settingsApi } from "../../api/auth.api";
-import { useNavigate } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import { PLANS } from "../../constants/plans";
 
 const Crown = () => (
@@ -29,11 +29,6 @@ export default function Notification() {
     const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
     const [message, setMessage] = useState("");
 
-    const navigate = useNavigate()
-
-    const handleUpgradeClick = () => {
-        navigate("/dashboard/billing");
-    }
 
     useEffect(() => {
         if (!isPro) {
@@ -212,8 +207,8 @@ export default function Notification() {
                             Failure alert emails and weekly digest emails are available on the Pro plan.
                         </p>
                     </div>
-                    <a
-                        onClick={handleUpgradeClick}
+                    <Link
+                        to="/dashboard/billing"
                         className="px-4 py-1.5 text-[13px] font-semibold rounded-full transition-opacity hover:opacity-80 whitespace-nowrap"
                         style={{
                             background: "rgba(168,85,247,0.8)",
@@ -221,7 +216,7 @@ export default function Notification() {
                         }}
                     >
                         Upgrade
-                    </a>
+                    </Link>
                 </div>
             )}
 

@@ -196,8 +196,8 @@ export default function LoginPage() {
                             >
                                 Password
                             </label>
-                            <a
-                                href="#"
+                            <Link
+                                to="#"
                                 className="text-xs transition-colors duration-150"
                                 style={{ color: "var(--color-primary)" }}
                                 onMouseOver={(e) =>
@@ -210,7 +210,7 @@ export default function LoginPage() {
                                 }
                             >
                                 Forgot password?
-                            </a>
+                            </Link>
                         </div>
                         <div className="relative flex items-center">
                             <Lock
