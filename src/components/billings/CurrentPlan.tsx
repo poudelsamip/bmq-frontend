@@ -1,17 +1,21 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { projectApi } from "../../api/projects.api";
+import { PLAN_PROJECT_LIMITS } from "../../constants/plans";
 
 export default function CurrentPlan() {
     const { user } = useAuth();
-    const [projectCount, setProjectCount] = useState(0);
-
+    const [projectCount, setProjectCount] = useState<number>(0);
     useEffect(() => {
-        projectApi.getAll().then(res => setProjectCount(res.data.length)).catch(console.error);
+        projectApi.getAll().then(res => {
+            setProjectCount(res.data.length);
+        }).catch(err => {
+            console.error(err);
+        });
     }, []);
 
     const planName = user?.plan === "pro" ? "Pro Tier" : "Free Tier";
-    const planLimit = user?.plan === "pro" ? 5 : 2;
+    const planLimit = user?.plan === "pro" ? PLAN_PROJECT_LIMITS.pro : PLAN_PROJECT_LIMITS.free;
     const usagePercent = Math.round((projectCount / planLimit) * 100);
 
     return (

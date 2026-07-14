@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Search, RefreshCw, Trash2, Droplets } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { Search, RefreshCw, Trash2, Droplets, Crown, X } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { queueApi, type RetryJobsSummary } from "../../api/queue.api";
 import ConfirmModal from "../ui/ConfirmModal";
+import { useAuth } from "../../context/AuthContext";
+import { PLANS } from "../../constants/plans";
 
 type BulkAction = "retry-all" | "clean-completed" | "clean-failed" | "drain";
 
@@ -16,10 +18,20 @@ interface ActionResult {
 export default function JobsHeader() {
     const { id, queueName } = useParams();
     const queryClient = useQueryClient();
+    const { user } = useAuth();
+    const navigate = useNavigate();
+
+    const handleUpgradeClick = () => {
+        setShowUpgrade(false);
+        navigate("/dashboard/billing");
+    };
+
+    const isPro = user?.plan === PLANS.pro;
 
     const [busy, setBusy] = useState<BulkAction | null>(null);
     const [result, setResult] = useState<ActionResult | null>(null);
     const [confirmAction, setConfirmAction] = useState<BulkAction | null>(null);
+    const [showUpgrade, setShowUpgrade] = useState(false);
 
     const invalidateJobs = () =>
         queryClient.invalidateQueries({ queryKey: ["jobs", id, queueName] });
@@ -89,13 +101,27 @@ export default function JobsHeader() {
         }
     };
 
-    const actions = [
+    // Gate: free-plan users get the upgrade popup instead of the confirm modal
+    const requestAction = (key: BulkAction) => {
+        if (!isPro) {
+            setShowUpgrade(true);
+            return;
+        }
+        setConfirmAction(key);
+    };
+
+    const actions: {
+        key: BulkAction;
+        label: string;
+        busyLabel: string;
+        icon: React.ReactNode;
+        style: React.CSSProperties;
+    }[] = [
         {
-            key: "retry-all" as BulkAction,
+            key: "retry-all",
             label: "Retry All Failed",
             busyLabel: "Retrying…",
             icon: <RefreshCw size={13} />,
-            onClick: handleRetryAll,
             style: {
                 border: "1px solid rgba(96,165,250,0.4)",
                 color: "#60a5fa",
@@ -103,11 +129,10 @@ export default function JobsHeader() {
             },
         },
         {
-            key: "clean-completed" as BulkAction,
+            key: "clean-completed",
             label: "Clean Completed",
             busyLabel: "Cleaning…",
             icon: <Trash2 size={13} />,
-            onClick: handleCleanCompleted,
             style: {
                 border: "1px solid rgba(34,197,94,0.4)",
                 color: "#22c55e",
@@ -115,11 +140,10 @@ export default function JobsHeader() {
             },
         },
         {
-            key: "clean-failed" as BulkAction,
+            key: "clean-failed",
             label: "Clean Failed",
             busyLabel: "Cleaning…",
             icon: <Trash2 size={13} />,
-            onClick: handleCleanFailed,
             style: {
                 border: "1px solid rgba(239,68,68,0.4)",
                 color: "var(--color-error)",
@@ -127,21 +151,17 @@ export default function JobsHeader() {
             },
         },
         {
-            key: "drain" as BulkAction,
+            key: "drain",
             label: "Drain Queue",
             busyLabel: "Draining…",
             icon: <Droplets size={13} />,
-            onClick: () => setConfirmAction("drain"),
             style: {
                 border: "1px solid var(--color-outline)",
                 color: "var(--color-on-surface-variant)",
                 background: "transparent",
             },
         },
-    ].map(a => ({
-        ...a,
-        onClick: () => setConfirmAction(a.key)
-    }));
+    ];
 
     const getModalConfig = () => {
         switch (confirmAction) {
@@ -222,9 +242,9 @@ export default function JobsHeader() {
                         return (
                             <button
                                 key={action.key}
-                                onClick={action.onClick}
+                                onClick={() => requestAction(action.key)}
                                 disabled={anyBusy}
-                                className="flex items-center gap-1.5 px-3 py-2 rounded text-xs font-medium transition-opacity"
+                                className="relative flex items-center gap-1.5 px-3 py-2 rounded text-xs font-medium transition-opacity"
                                 style={{
                                     ...action.style,
                                     opacity: anyBusy && !isThisBusy ? 0.45 : 1,
@@ -232,16 +252,26 @@ export default function JobsHeader() {
                                 }}
                             >
                                 {isThisBusy ? (
-                                    <span
-                                        className="inline-block animate-spin"
-                                        style={{ fontSize: 12 }}
-                                    >
+                                    <span className="inline-block animate-spin" style={{ fontSize: 12 }}>
                                         ↻
                                     </span>
                                 ) : (
                                     action.icon
                                 )}
                                 {isThisBusy ? action.busyLabel : action.label}
+
+                                {!isPro && (
+                                    <span
+                                        className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-4 h-4 rounded-full"
+                                        style={{
+                                            background: "#facc15",
+                                            border: "1px solid var(--color-surface-container)",
+                                        }}
+                                        title="Pro feature"
+                                    >
+                                        <Crown size={9} color="#1a1a1a" />
+                                    </span>
+                                )}
                             </button>
                         );
                     })}
@@ -277,6 +307,79 @@ export default function JobsHeader() {
                 onCancel={() => setConfirmAction(null)}
                 isBusy={busy !== null}
             />
+
+            {/* Upgrade to Pro popup */}
+            {showUpgrade && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                    style={{ background: "rgba(0,0,0,0.55)" }}
+                    onClick={() => setShowUpgrade(false)}
+                >
+                    <div
+                        className="w-full max-w-sm rounded-lg p-5 relative"
+                        style={{
+                            background: "var(--color-surface-container)",
+                            border: "1px solid var(--color-outline-variant)",
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            onClick={() => setShowUpgrade(false)}
+                            className="absolute top-3 right-3"
+                            style={{ color: "var(--color-on-surface-variant)" }}
+                        >
+                            <X size={16} />
+                        </button>
+
+                        <div
+                            className="w-10 h-10 rounded-full flex items-center justify-center mb-3"
+                            style={{
+                                background: "rgba(250,204,21,0.15)",
+                                border: "1px solid rgba(250,204,21,0.35)",
+                            }}
+                        >
+                            <Crown size={18} color="#facc15" />
+                        </div>
+
+                        <h3
+                            className="text-sm font-semibold mb-1"
+                            style={{ color: "var(--color-on-surface)" }}
+                        >
+                            Pro feature
+                        </h3>
+                        <p
+                            className="text-xs mb-4"
+                            style={{ color: "var(--color-on-surface-variant)" }}
+                        >
+                            Bulk queue actions (retry, clean, drain) are only available on the Pro plan. Upgrade to manage jobs in bulk and unlock more queue tools.
+                        </p>
+
+                        <div className="flex items-center justify-end gap-2">
+                            <button
+                                onClick={() => setShowUpgrade(false)}
+                                className="px-3 py-2 rounded text-xs font-medium"
+                                style={{
+                                    color: "var(--color-on-surface-variant)",
+                                    background: "transparent",
+                                }}
+                            >
+                                Not now
+                            </button>
+                            <button
+                                onClick={handleUpgradeClick}
+                                className="flex items-center gap-1.5 px-3 py-2 rounded text-xs font-semibold"
+                                style={{
+                                    background: "#facc15",
+                                    color: "#1a1a1a",
+                                }}
+                            >
+                                <Crown size={13} />
+                                Upgrade to Pro
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

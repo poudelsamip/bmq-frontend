@@ -79,7 +79,7 @@ export default function EmailVerification({
             }}
         >
             <main
-                className="w-full max-w-md rounded-xl p-6 sm:p-8 flex flex-col my-6"
+                className="w-full max-w-md rounded-md p-6 sm:p-8 flex flex-col my-6"
                 style={{
                     background: "var(--color-surface-container-low)",
                     border: "1px solid var(--color-outline-variant)",
@@ -90,7 +90,7 @@ export default function EmailVerification({
                     <header className="flex flex-col items-center mb-5 text-center">
                         <div className="flex items-center gap-2.5 mb-2">
                             <div
-                                className="w-9 h-9 rounded-lg flex items-center justify-center"
+                                className="w-9 h-9 rounded-sm flex items-center justify-center"
                                 style={{ background: "var(--color-primary-container)" }}
                             >
                                 <Boxes size={20} style={{ color: "var(--color-on-primary-container)" }} />
@@ -122,7 +122,7 @@ export default function EmailVerification({
                 <div className="flex flex-col items-center">
                     {/* icon badge */}
                     <div
-                        className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+                        className="w-12 h-12 rounded-sm flex items-center justify-center mb-4"
                         style={{ background: "var(--color-primary-container)" }}
                     >
                         <MailCheck size={24} style={{ color: "var(--color-on-primary-container)" }} />
@@ -147,7 +147,7 @@ export default function EmailVerification({
                     {/* ── Error banner ── */}
                     {error && (
                         <div
-                            className="w-full text-sm px-3 py-2.5 rounded-lg mb-4"
+                            className="w-full text-sm px-3 py-2.5 rounded-sm mb-4"
                             style={{
                                 background: "var(--color-error-container)",
                                 color: "var(--color-on-error-container)",
@@ -165,7 +165,7 @@ export default function EmailVerification({
                         onChange={e => setOtp(e.target.value)}
                         maxLength={6}
                         placeholder="Enter code"
-                        className="w-full text-center text-lg tracking-[0.35em] rounded-lg py-3 px-4 mb-4 transition-all duration-150 focus:outline-none"
+                        className="w-full text-center text-lg tracking-[0.35em] rounded-sm py-3 px-4 mb-4 transition-all duration-150 focus:outline-none"
                         style={{
                             background: "var(--color-surface-container)",
                             color: "var(--color-on-surface)",
@@ -187,7 +187,7 @@ export default function EmailVerification({
                         id="verify-btn"
                         onClick={handleVerify}
                         disabled={isLoading}
-                        className="w-full py-2.5 text-sm font-semibold rounded-lg transition-all duration-150 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="w-full py-2.5 text-sm font-semibold rounded-sm transition-all duration-150 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
                         style={{
                             background: "var(--color-primary)",
                             color: "var(--color-on-primary)",

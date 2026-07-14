@@ -36,7 +36,7 @@ export default function ProfilePage() {
                 <div>
                     <p
                         className="text-base font-bold"
-                        style={{ color: "var(--color-on-surface)", fontFamily: "Manrope, sans-serif" }}
+                        style={{ color: "var(--color-on-surface)", fontFamily: "Manrope ,sans-serif" }}
                     >
                         {user?.name ?? "—"}
                     </p>
@@ -44,7 +44,7 @@ export default function ProfilePage() {
                         className="text-sm mt-0.5"
                         style={{ color: "var(--color-on-surface-variant)" }}
                     >
-                        {user?.email ?? "—"}
+                        {user?.email.toLowerCase() ?? "—"}
                     </p>
                     <span
                         className="inline-block mt-2 px-2.5 py-0.5 text-xs font-semibold rounded capitalize"
@@ -54,7 +54,7 @@ export default function ProfilePage() {
                             border: "1px solid var(--color-outline-variant)",
                         }}
                     >
-                        {user?.plan ?? "starter"} plan
+                        {user?.plan ?? "free"} plan
                     </span>
                 </div>
             </div>
@@ -92,7 +92,7 @@ export default function ProfilePage() {
                             {label}
                         </span>
                         <span
-                            className="text-sm font-medium capitalize"
+                            className={`${i === 2 ? "capitalize" : ""} text-sm font-medium`}
                             style={{ color: "var(--color-on-surface)" }}
                         >
                             {value}

@@ -6,13 +6,13 @@ import { useNavigate } from "react-router-dom";
 import ProjectCard from "../components/dashboard/ProjectCard";
 import CreateProjectCard from "../components/dashboard/CreateProjectCard";
 import CreateProjectModal from "../components/projects/CreateProjectModal";
-import InfraGraph from "../components/dashboard/InfraGraph";
+import { PLAN_PROJECT_LIMITS } from "../constants/plans";
 
 export default function ProjectsPage() {
     const navigate = useNavigate();
     const { user } = useAuth();
     
-    const planLimit = user?.plan === "pro" ? 5 : 2;
+    const planLimit = user?.plan === "pro" ? PLAN_PROJECT_LIMITS.pro : PLAN_PROJECT_LIMITS.free;
 
     const [projects, setProjects] = useState<AllProjects[]>([]);
     const [showModal, setShowModal] = useState(false);
@@ -90,11 +90,13 @@ export default function ProjectsPage() {
                         onDelete={onDeleteProject}
                     />
                 ))}
-                <CreateProjectCard onCreate={onCreateProject} />
+                <CreateProjectCard 
+                    onCreate={onCreateProject} 
+                    disabled={user?.plan !== "pro" && projects.length >= planLimit}
+                    disabledMessage={`Free plan allows up to ${planLimit} projects. Upgrade to Pro`}
+                />
             </section>
 
-            {/* Global Infrastructure Graph */}
-            <InfraGraph />
 
             {/* Create Project Modal */}
             {showModal && (

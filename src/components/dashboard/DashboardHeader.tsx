@@ -6,7 +6,7 @@ interface DashboardHeaderProps {
 export default function DashboardHeader({ title, onCreateJob }: DashboardHeaderProps) {
     return (
         <header
-            className="fixed top-0 right-0 h-16 flex items-center justify-between px-6 z-10"
+            className="fixed top-0 right-0 h-16 flex items-center justify-between px-6 z-50"
             style={{
                 left: 220,
                 backgroundColor: "rgba(19, 18, 28, 0.90)",

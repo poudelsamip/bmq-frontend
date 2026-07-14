@@ -2,10 +2,13 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { queueApi, type JobDetails } from "../../api/queue.api";
-import { X } from "lucide-react";
+import { X, Crown } from "lucide-react";
 import { getStateBadgeStyle } from "../ui/StatusBadge";
 import { formatDateTimeSplit } from "../../utils/date";
 import FlowTreeModal from "./FlowTreeModal";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { PLANS } from "../../constants/plans";
 
 const renderTimestamp = (timestamp: number | string | undefined | null) => {
     const formatted = formatDateTimeSplit(timestamp);
@@ -28,6 +31,15 @@ export default function JobDrawer({
     onClose: () => void;
 }) {
     const { id, queueName } = useParams();
+    const { user } = useAuth();
+    const navigate = useNavigate();
+    // TODO: adjust to match your actual AuthUser plan field
+    const isPro = user?.plan === PLANS.pro;
+
+    const handleUpgradeClick = () => {
+        setShowUpgrade(false);
+        navigate("/dashboard/billing");
+    };
 
     const {
         data: job,
@@ -46,6 +58,7 @@ export default function JobDrawer({
     const [retrying, setRetrying] = useState(false);
     const [removing, setRemoving] = useState(false);
     const [showFlowTree, setShowFlowTree] = useState(false);
+    const [showUpgrade, setShowUpgrade] = useState(false);
 
     const invalidate = async () => {
         await Promise.all([
@@ -85,7 +98,12 @@ export default function JobDrawer({
         }
     };
 
+    // Gate: free-plan users get the upgrade popup, never the modal itself
     const handleFlowTreeClick = () => {
+        if (!isPro) {
+            setShowUpgrade(true);
+            return;
+        }
         setShowFlowTree(true);
     };
 
@@ -93,7 +111,7 @@ export default function JobDrawer({
 
     return (
         <>
-            {showFlowTree && (
+            {showFlowTree && isPro && (
                 <FlowTreeModal
                     jobId={jobId}
                     jobName={job?.name}
@@ -432,7 +450,7 @@ export default function JobDrawer({
                 </button>
 
                 <button
-                    className="flex-1 py-2 rounded text-sm font-medium transition-opacity hover:opacity-80"
+                    className="relative flex-1 py-2 rounded text-sm font-medium transition-opacity hover:opacity-80"
                     style={{
                         background: "var(--color-primary-container)",
                         color: "white",
@@ -440,9 +458,94 @@ export default function JobDrawer({
                     onClick={handleFlowTreeClick}
                 >
                     Flow Tree
+                    {!isPro && (
+                        <span
+                            className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-4 h-4 rounded-full"
+                            style={{
+                                background: "#facc15",
+                                border: "1px solid var(--color-surface-container-low)",
+                            }}
+                            title="Pro feature"
+                        >
+                            <Crown size={9} color="#1a1a1a" />
+                        </span>
+                    )}
                 </button>
             </div>
         </aside>
+
+        {/* Upgrade to Pro popup */}
+        {showUpgrade && (
+            <div
+                className="fixed inset-0 z-[60] flex items-center justify-center p-4"
+                style={{ background: "rgba(0,0,0,0.55)" }}
+                onClick={() => setShowUpgrade(false)}
+            >
+                <div
+                    className="w-full max-w-sm rounded-lg p-5 relative"
+                    style={{
+                        background: "var(--color-surface-container)",
+                        border: "1px solid var(--color-outline-variant)",
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <button
+                        onClick={() => setShowUpgrade(false)}
+                        className="absolute top-3 right-3"
+                        style={{ color: "var(--color-on-surface-variant)" }}
+                    >
+                        <X size={16} />
+                    </button>
+
+                    <div
+                        className="w-10 h-10 rounded-full flex items-center justify-center mb-3"
+                        style={{
+                            background: "rgba(250,204,21,0.15)",
+                            border: "1px solid rgba(250,204,21,0.35)",
+                        }}
+                    >
+                        <Crown size={18} color="#facc15" />
+                    </div>
+
+                    <h3
+                        className="text-sm font-semibold mb-1"
+                        style={{ color: "var(--color-on-surface)" }}
+                    >
+                        Pro feature
+                    </h3>
+                    <p
+                        className="text-xs mb-4"
+                        style={{ color: "var(--color-on-surface-variant)" }}
+                    >
+                        Flow Tree visualization is only available on the Pro plan. Upgrade to trace job dependencies and parent/child relationships visually.
+                    </p>
+
+                    <div className="flex items-center justify-end gap-2">
+                        <button
+                            onClick={() => setShowUpgrade(false)}
+                            className="px-3 py-2 rounded text-xs font-medium"
+                            style={{
+                                color: "var(--color-on-surface-variant)",
+                                background: "transparent",
+                            }}
+                        >
+                            Not now
+                        </button>
+                        <button
+                            onClick={handleUpgradeClick}
+                            className="flex items-center gap-1.5 px-3 py-2 rounded text-xs font-semibold"
+                            style={{
+                                background: "#facc15",
+                                color: "#1a1a1a",
+                            }}
+                        >
+                            <Crown size={13} />
+                            Upgrade to Pro
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
         </>
     );
 }

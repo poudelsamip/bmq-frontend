@@ -51,3 +51,42 @@ export const authApi = {
         return res.data;
     },
 };
+
+export const settingsApi = {
+    updateProfile: async (body: { name: string }) => {
+        const res = await api.patch<ApiResponse<{ user: AuthUser }>>(
+            "/auth/me/profile",
+            body,
+        );
+        return res.data;
+    },
+
+    updatePassword: async (body: {
+        currentPassword: string;
+        newPassword: string;
+        confirmPassword: string;
+    }) => {
+        const res = await api.patch<ApiResponse<null>>("/auth/me/password", {
+            currentPassword: body.currentPassword,
+            newPassword: body.newPassword,
+        });
+        return res.data;
+    },
+
+    getNotifications: async () => {
+        const res = await api.get<
+            ApiResponse<{ preferences: { failureAlerts: boolean; weeklyDigest: boolean } }>
+        >("/auth/me/notifications");
+        return res.data;
+    },
+
+    updateNotifications: async (body: {
+        failureAlerts: boolean;
+        weeklyDigest: boolean;
+    }) => {
+        const res = await api.patch<
+            ApiResponse<{ preferences: { failureAlerts: boolean; weeklyDigest: boolean } }>
+        >("/auth/me/notifications", body);
+        return res.data;
+    },
+};

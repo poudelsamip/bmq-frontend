@@ -5,7 +5,7 @@ const transactions = [
 
 export default function RecentTransactions() {
     return (
-        <section style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <section style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: "30px" }}>
             <h3
                 style={{
                     fontFamily: "Manrope, sans-serif",

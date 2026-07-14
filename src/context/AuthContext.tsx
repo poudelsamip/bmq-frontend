@@ -18,6 +18,7 @@ interface AuthCtx {
     isLoading: boolean;
     login: (token: string, user: AuthUser) => void;
     logout: () => Promise<void>;
+    updateUser: (partial: Partial<AuthUser>) => void;
 }
 
 const Ctx = createContext<AuthCtx | undefined>(undefined);
@@ -48,6 +49,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser(null);
             navigateRef.current("/login", { replace: true });
         }
+    }, []);
+
+    const updateUser = useCallback((partial: Partial<AuthUser>) => {
+        setUser((prev) => (prev ? { ...prev, ...partial } : prev));
     }, []);
 
     // Boot: rehydrate from HttpOnly refresh cookie
@@ -91,6 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 isLoading,
                 login,
                 logout,
+                updateUser,
             }}
         >
             {children}

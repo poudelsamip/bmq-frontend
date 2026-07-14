@@ -45,48 +45,72 @@ const plans = [
 export default function PlansPricing() {
     return (
         <div
-            className="grid grid-cols-1 md:grid-cols-3"
-            style={{ gap: 16, alignItems: "start" }}
+            className="grid grid-cols-1 md:grid-cols-2 w-full max-w-[900px] mx-auto mt-8"
+            style={{ gap: 24, alignItems: "stretch" }}
         >
             {plans.map((plan, i) => (
                 <div
                     key={i}
-                    className="relative flex flex-col rounded-sm transition-colors"
+                    className="group relative flex flex-col rounded-sm transition-all duration-300"
                     style={{
                         backgroundColor: "var(--color-surface-container)",
                         border: plan.highlight
-                            ? "2px solid var(--color-primary)"
+                            ? "1px solid var(--color-primary)"
                             : "1px solid var(--color-outline-variant)",
-                        padding: "32px",
-                        marginTop: plan.highlight ? 0 : 8,
+                        padding: "32px 32px 40px",
                         boxShadow: plan.highlight
-                            ? "0 24px 48px rgba(0,0,0,0.4), 0 0 0 4px rgba(183,196,255,0.05)"
-                            : "none",
-                        transform: plan.highlight ? "translateY(-8px)" : "none",
+                            ? "0 32px 64px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 1px color-mix(in srgb, var(--color-primary) 30%, transparent)"
+                            : "0 12px 32px -12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)",
+                        transform: plan.highlight ? "scale(1.02)" : "scale(1)",
+                        zIndex: 1,
                     }}
                     onMouseEnter={(e) => {
-                        if (!plan.highlight)
-                            (e.currentTarget as HTMLElement).style.borderColor =
-                                "rgba(183, 196, 255, 0.50)";
+                        const el = e.currentTarget as HTMLElement;
+                        el.style.zIndex = "10";
+                        if (!plan.highlight) {
+                            el.style.borderColor = "var(--color-outline)";
+                            el.style.transform = "translateY(-4px)";
+                            el.style.boxShadow = "0 24px 48px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)";
+                        } else {
+                            el.style.transform = "scale(1.03) translateY(-2px)";
+                            el.style.boxShadow = "0 40px 80px -12px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 1px color-mix(in srgb, var(--color-primary) 50%, transparent)";
+                        }
                     }}
                     onMouseLeave={(e) => {
-                        if (!plan.highlight)
-                            (e.currentTarget as HTMLElement).style.borderColor =
-                                "var(--color-outline-variant)";
+                        const el = e.currentTarget as HTMLElement;
+                        el.style.zIndex = "1";
+                        if (!plan.highlight) {
+                            el.style.borderColor = "var(--color-outline-variant)";
+                            el.style.transform = "scale(1)";
+                            el.style.boxShadow = "0 12px 32px -12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)";
+                        } else {
+                            el.style.transform = "scale(1.02)";
+                            el.style.boxShadow = "0 32px 64px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 1px color-mix(in srgb, var(--color-primary) 30%, transparent)";
+                        }
                     }}
                 >
+                    {/* Subtle gradient background for highlight */}
+                    {plan.highlight && (
+                        <div 
+                            className="absolute inset-0 opacity-10 pointer-events-none transition-opacity duration-300 group-hover:opacity-20 rounded-sm overflow-hidden"
+                            style={{
+                                background: "radial-gradient(circle at top right, var(--color-primary), transparent 60%)"
+                            }}
+                        />
+                    )}
+
                     {/* Most popular badge */}
                     {plan.label && (
                         <div
-                            className="absolute left-1/2 -translate-x-1/2 rounded-full uppercase"
+                            className="absolute left-1/2 -translate-x-1/2 rounded-full uppercase shadow-lg"
                             style={{
-                                top: -12,
+                                top: -14,
                                 backgroundColor: "var(--color-primary)",
                                 color: "var(--color-on-primary)",
-                                padding: "4px 12px",
-                                fontSize: 10,
-                                fontWeight: 600,
-                                letterSpacing: "0.1em",
+                                padding: "6px 16px",
+                                fontSize: 11,
+                                fontWeight: 700,
+                                letterSpacing: "0.15em",
                                 whiteSpace: "nowrap",
                             }}
                         >
@@ -95,30 +119,32 @@ export default function PlansPricing() {
                     )}
 
                     {/* Plan header */}
-                    <div style={{ marginBottom: 32 }}>
-                        <p
+                    <div className="relative z-10" style={{ marginBottom: 32 }}>
+                        <h3
                             style={{
-                                fontSize: 13,
+                                fontSize: 16,
                                 fontWeight: 600,
                                 color: plan.highlight
                                     ? "var(--color-primary)"
-                                    : "var(--color-on-surface-variant)",
+                                    : "var(--color-on-surface)",
                                 margin: 0,
+                                letterSpacing: "0.02em",
+                                textTransform: "uppercase"
                             }}
                         >
                             {plan.name}
-                        </p>
+                        </h3>
                         <div
                             className="flex items-baseline"
-                            style={{ gap: 4, marginTop: 8 }}
+                            style={{ gap: 6, marginTop: 12 }}
                         >
                             <span
                                 style={{
                                     fontFamily: "Manrope, sans-serif",
-                                    fontSize: 32,
-                                    fontWeight: 700,
-                                    lineHeight: "40px",
-                                    letterSpacing: "-0.02em",
+                                    fontSize: 48,
+                                    fontWeight: 800,
+                                    lineHeight: "1",
+                                    letterSpacing: "-0.03em",
                                     color: "var(--color-on-surface)",
                                 }}
                             >
@@ -126,7 +152,8 @@ export default function PlansPricing() {
                             </span>
                             <span
                                 style={{
-                                    fontSize: 14,
+                                    fontSize: 15,
+                                    fontWeight: 500,
                                     color: "var(--color-on-surface-variant)",
                                 }}
                             >
@@ -135,11 +162,11 @@ export default function PlansPricing() {
                         </div>
                         <p
                             style={{
-                                fontSize: 14,
+                                fontSize: 15,
                                 color: "var(--color-on-surface-variant)",
-                                marginTop: 16,
-                                margin: "16px 0 0",
-                                lineHeight: "20px",
+                                marginTop: 20,
+                                margin: "20px 0 0",
+                                lineHeight: "1.6",
                             }}
                         >
                             {plan.description}
@@ -148,7 +175,7 @@ export default function PlansPricing() {
 
                     {/* Features list */}
                     <ul
-                        className="flex-1"
+                        className="flex-1 relative z-10"
                         style={{
                             listStyle: "none",
                             padding: 0,
@@ -156,29 +183,30 @@ export default function PlansPricing() {
                             display: "flex",
                             flexDirection: "column",
                             gap: 16,
-                            marginBottom: 32,
+                            marginBottom: 40,
                         }}
                     >
                         {plan.features.map((f, idx) => (
                             <li
                                 key={idx}
                                 className="flex items-center"
-                                style={{ gap: 12 }}
+                                style={{ gap: 14 }}
                             >
                                 <span
-                                    className="material-symbols-outlined"
+                                    className="material-symbols-outlined shrink-0"
                                     style={{
-                                        fontSize: 20,
-                                        color: "var(--color-primary)",
-                                        flexShrink: 0,
+                                        fontSize: 22,
+                                        color: plan.highlight ? "var(--color-primary)" : "var(--color-on-surface-variant)",
+                                        opacity: plan.highlight ? 1 : 0.7,
                                     }}
                                 >
                                     check_circle
                                 </span>
                                 <span
                                     style={{
-                                        fontSize: 14,
+                                        fontSize: 15,
                                         color: "var(--color-on-surface)",
+                                        fontWeight: 500,
                                     }}
                                 >
                                     {f}
@@ -188,60 +216,59 @@ export default function PlansPricing() {
                     </ul>
 
                     {/* CTA button */}
-                    <button
-                        disabled={plan.disabled}
-                        className="w-full rounded-sm transition-all active:scale-[0.98]"
-                        style={
-                            plan.disabled
-                                ? {
-                                      padding: "12px 0",
-                                      border: "1px solid var(--color-outline-variant)",
-                                      color: "var(--color-on-surface-variant)",
-                                      backgroundColor: "transparent",
-                                      fontSize: 13,
-                                      fontWeight: 600,
-                                      opacity: 0.4,
-                                      cursor: "default",
-                                  }
-                                : plan.highlight
-                                  ? {
-                                        padding: "12px 0",
-                                        backgroundColor: "var(--color-primary)",
-                                        color: "var(--color-on-primary)",
-                                        fontSize: 13,
-                                        fontWeight: 600,
-                                        border: "none",
-                                        boxShadow: "0 4px 12px rgba(183,196,255,0.25)",
-                                    }
-                                  : {
-                                        padding: "12px 0",
-                                        backgroundColor: "rgba(183, 196, 255, 0.20)",
-                                        color: "var(--color-primary)",
-                                        border: "1px solid rgba(183, 196, 255, 0.30)",
-                                        fontSize: 13,
-                                        fontWeight: 600,
-                                    }
-                        }
-                        onMouseEnter={(e) => {
-                            if (plan.highlight)
-                                (e.currentTarget as HTMLElement).style.filter = "brightness(1.1)";
-                            if (plan.ghost)
-                                Object.assign((e.currentTarget as HTMLElement).style, {
-                                    backgroundColor: "var(--color-primary)",
-                                    color: "var(--color-on-primary)",
-                                });
-                        }}
-                        onMouseLeave={(e) => {
-                            (e.currentTarget as HTMLElement).style.filter = "";
-                            if (plan.ghost)
-                                Object.assign((e.currentTarget as HTMLElement).style, {
-                                    backgroundColor: "rgba(183, 196, 255, 0.20)",
-                                    color: "var(--color-primary)",
-                                });
-                        }}
-                    >
-                        {plan.button}
-                    </button>
+                    <div className="mt-auto relative z-10">
+                        <button
+                            disabled={plan.disabled}
+                            className={`w-full rounded-sm transition-all duration-300 font-semibold text-[15px] ${plan.disabled ? '' : 'active:scale-[0.98]'}`}
+                            style={
+                                plan.disabled
+                                    ? {
+                                          padding: "16px 0",
+                                          backgroundColor: "color-mix(in srgb, var(--color-surface-container-highest) 50%, transparent)",
+                                          border: "1px solid var(--color-outline-variant)",
+                                          color: "var(--color-on-surface-variant)",
+                                          opacity: 0.7,
+                                          cursor: "not-allowed",
+                                      }
+                                    : plan.highlight
+                                      ? {
+                                            padding: "16px 0",
+                                            backgroundColor: "var(--color-primary)",
+                                            color: "var(--color-on-primary)",
+                                            border: "none",
+                                            boxShadow: "0 8px 24px -6px color-mix(in srgb, var(--color-primary) 60%, transparent)",
+                                        }
+                                      : {
+                                            padding: "16px 0",
+                                            backgroundColor: "transparent",
+                                            color: "var(--color-on-surface)",
+                                            border: "1px solid var(--color-outline)",
+                                        }
+                            }
+                            onMouseEnter={(e) => {
+                                if (plan.disabled) return;
+                                const el = e.currentTarget as HTMLElement;
+                                if (plan.highlight) {
+                                    el.style.filter = "brightness(1.15)";
+                                    el.style.boxShadow = "0 12px 32px -6px color-mix(in srgb, var(--color-primary) 70%, transparent)";
+                                } else {
+                                    el.style.backgroundColor = "var(--color-surface-container-highest)";
+                                }
+                            }}
+                            onMouseLeave={(e) => {
+                                if (plan.disabled) return;
+                                const el = e.currentTarget as HTMLElement;
+                                el.style.filter = "none";
+                                if (plan.highlight) {
+                                    el.style.boxShadow = "0 8px 24px -6px color-mix(in srgb, var(--color-primary) 60%, transparent)";
+                                } else {
+                                    el.style.backgroundColor = "transparent";
+                                }
+                            }}
+                        >
+                            {plan.button}
+                        </button>
+                    </div>
                 </div>
             ))}
         </div>
