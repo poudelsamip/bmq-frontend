@@ -72,6 +72,14 @@ export default function LoginPage() {
     //     );
     // }
 
+    const handleGoogleLogin = () => {
+        window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+    };
+
+    const handleGitHubLogin = () => {
+        window.location.href = `${import.meta.env.VITE_API_URL}/auth/github`;
+    };
+
     return (
         <div
             className="min-h-screen flex items-start sm:items-center justify-center px-4 py-6"
@@ -296,10 +304,7 @@ export default function LoginPage() {
                 <div className="flex flex-col gap-2.5 mb-4">
                     <button
                         id="google-login-btn"
-                        onClick={() => {
-                            window.location.href =
-                                "http://localhost:3000/api/auth/google";
-                        }}
+                        onClick={handleGoogleLogin}
                         className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm font-medium rounded-sm transition-all duration-150 active:scale-[0.98]"
                         style={{
                             background: "var(--color-surface-container)",
@@ -319,10 +324,7 @@ export default function LoginPage() {
                     </button>
                     <button
                         id="github-login-btn"
-                        onClick={() => {
-                            window.location.href =
-                                "http://localhost:3000/api/auth/github";
-                        }}
+                        onClick={handleGitHubLogin}
                         className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm font-medium rounded-sm transition-all duration-150 active:scale-[0.98]"
                         style={{
                             background: "var(--color-surface-container)",
