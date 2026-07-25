@@ -129,7 +129,8 @@ const PLANS = [
         price: "$0",
         period: "/month",
         desc: "Essential monitoring tools for personal projects and getting started.",
-        cta: "Current Plan",
+        cta: "Start for Free",
+        ctaTo: "/auth",
         featured: false,
         perks: [
             "2 Projects",
@@ -145,6 +146,7 @@ const PLANS = [
         period: "/month",
         desc: "Everything you need to monitor, debug, and optimize your BullMQ workloads in production.",
         cta: "Upgrade to Pro",
+        ctaTo: "/auth",
         featured: true,
         perks: [
             "Unlimited Projects",
@@ -250,23 +252,25 @@ type Edge = {
 function FlowTreeDemo() {
     const [selected, setSelected] = useState<string | null>(null);
 
+    // Scale factor: ~1.4× larger nodes for better legibility
+    const SCALE = 1.4;
     const edges: Edge[] = [];
     FLOW_NODES.forEach((n) => {
         n.children.forEach((cid) => {
             const child = FLOW_NODES.find((x) => x.id === cid);
             if (child) {
                 edges.push({
-                    x1: n.x + 75,
-                    y1: n.y + 32,
-                    x2: child.x + 75,
-                    y2: child.y,
+                    x1: n.x * SCALE + 105,
+                    y1: n.y * SCALE + 44,
+                    x2: child.x * SCALE + 105,
+                    y2: child.y * SCALE,
                 });
             }
         });
     });
 
     return (
-        <div style={{ position: "relative", width: "100%", height: 260 }}>
+        <div style={{ position: "relative", width: "100%", height: 380 }}>
             <svg
                 style={{
                     position: "absolute",
@@ -285,8 +289,8 @@ function FlowTreeDemo() {
                         x2={e.x2}
                         y2={e.y2}
                         stroke="#2a3042"
-                        strokeWidth="1.5"
-                        strokeDasharray="4 3"
+                        strokeWidth="2"
+                        strokeDasharray="5 4"
                     />
                 ))}
             </svg>
@@ -299,18 +303,18 @@ function FlowTreeDemo() {
                         onClick={() => setSelected(isSelected ? null : node.id)}
                         style={{
                             position: "absolute",
-                            left: node.x,
-                            top: node.y,
-                            width: 150,
+                            left: node.x * SCALE,
+                            top: node.y * SCALE,
+                            width: 210,
                             background: isSelected ? "#1a1f2e" : "#141820",
                             border: `1px solid ${isSelected ? sc.dot : "#1e2536"}`,
-                            borderRadius: 4,
-                            padding: "8px 11px",
+                            borderRadius: 6,
+                            padding: "11px 14px",
                             cursor: "pointer",
                             transition: "box-shadow 0.15s, border-color 0.15s",
                             boxShadow: isSelected
                                 ? `0 0 0 2px ${sc.dot}33`
-                                : "none",
+                                : "0 2px 8px rgba(0,0,0,0.3)",
                             zIndex: 2,
                         }}
                     >
@@ -318,13 +322,13 @@ function FlowTreeDemo() {
                             style={{
                                 display: "flex",
                                 alignItems: "center",
-                                gap: 6,
+                                gap: 8,
                             }}
                         >
                             <span
                                 style={{
-                                    width: 6,
-                                    height: 6,
+                                    width: 8,
+                                    height: 8,
                                     borderRadius: "50%",
                                     background: sc.dot,
                                     flexShrink: 0,
@@ -332,7 +336,7 @@ function FlowTreeDemo() {
                             />
                             <span
                                 style={{
-                                    fontSize: 11,
+                                    fontSize: 13,
                                     fontWeight: 600,
                                     color: "#e2e8f0",
                                     fontFamily: "'JetBrains Mono', monospace",
@@ -343,13 +347,13 @@ function FlowTreeDemo() {
                         </div>
                         <div
                             style={{
-                                marginTop: 5,
+                                marginTop: 6,
                                 display: "inline-block",
-                                fontSize: 9,
+                                fontSize: 10,
                                 fontWeight: 700,
                                 letterSpacing: "0.06em",
-                                padding: "2px 6px",
-                                borderRadius: 2,
+                                padding: "3px 8px",
+                                borderRadius: 3,
                                 background: sc.bg,
                                 color: sc.text,
                                 textTransform: "uppercase",
@@ -361,12 +365,12 @@ function FlowTreeDemo() {
                         {isSelected && node.state === "failed" && (
                             <div
                                 style={{
-                                    marginTop: 6,
-                                    fontSize: 10,
+                                    marginTop: 8,
+                                    fontSize: 11,
                                     color: "#f87171",
                                     background: "rgba(239,68,68,0.08)",
                                     borderRadius: 3,
-                                    padding: "4px 6px",
+                                    padding: "5px 8px",
                                     border: "1px solid rgba(239,68,68,0.15)",
                                 }}
                             >
@@ -491,7 +495,7 @@ function MockDashboard() {
                     style={{
                         fontSize: 10,
                         fontWeight: 700,
-                        color: "#3d4e6a",
+                        color: "#6b7c99",
                         marginBottom: 10,
                         textTransform: "uppercase",
                         letterSpacing: "0.1em",
@@ -515,9 +519,9 @@ function MockDashboard() {
                     >
                         <span
                             style={{
-                                fontSize: 11,
+                                fontSize: 12,
                                 fontWeight: 600,
-                                color: "#8b9ab5",
+                                color: "#a8b8cc",
                                 flex: 1,
                             }}
                         >
@@ -556,8 +560,8 @@ function MockDashboard() {
                                 </div>
                                 <div
                                     style={{
-                                        fontSize: 8,
-                                        color: "#3d4e6a",
+                                        fontSize: 9,
+                                        color: "#6b7c99",
                                         textTransform: "uppercase",
                                         letterSpacing: "0.06em",
                                         marginTop: 3,
@@ -644,12 +648,13 @@ export default function LandingPage() {
     const D = {
         bg: "#080b12",
         surface: "#0d1117",
-        surface2: "#0a0e16",
+        surface2: "#0a0e1a",
+        surface3: "#0f1420",
         border: "#1a2030",
         border2: "#1e2536",
         text: "#e2e8f0",
-        muted: "#4a5568",
-        subtle: "#2d3a50",
+        muted: "#94a3b8",
+        subtle: "#64748b",
         accent: "#6366f1",
         accentHover: "#4f46e5",
         accentDim: "rgba(99,102,241,0.1)",
@@ -673,13 +678,21 @@ export default function LandingPage() {
         * { box-sizing: border-box; margin: 0; padding: 0; }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
         @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
-        .nav-link { font-size:14px;font-weight:500;color:#64748b;text-decoration:none;transition:color 0.15s; }
+        .nav-link { font-size:14px;font-weight:500;color:#94a3b8;text-decoration:none;transition:color 0.15s; }
         .nav-link:hover { color:#e2e8f0; }
-        .feat-card:hover { border-color: var(--fc) !important; box-shadow: 0 0 0 1px var(--fc); }
+        .feat-card { border: 1px solid #1e2536 !important; box-shadow: 0 2px 12px rgba(0,0,0,0.35); }
+        .feat-card:hover { border-color: var(--fc) !important; box-shadow: 0 0 0 1px var(--fc), 0 4px 20px rgba(0,0,0,0.4); }
         .btn-primary { background:#6366f1;color:#fff;font-size:14px;font-weight:600;padding:11px 24px;border-radius:3px;text-decoration:none;letter-spacing:-0.01em;transition:background 0.15s; display:inline-block; }
         .btn-primary:hover { background:#4f46e5; }
         .btn-secondary { background:transparent;color:#94a3b8;font-size:14px;font-weight:500;padding:11px 24px;border-radius:3px;text-decoration:none;border:1px solid #1e2536;transition:border-color 0.15s,color 0.15s; display:inline-block; }
         .btn-secondary:hover { border-color:#3d4e6a;color:#e2e8f0; }
+        @media (max-width: 768px) {
+          .hero-mockup-wrap { max-width: 100% !important; }
+          .trust-bar { gap: 28px !important; }
+        }
+        @media (max-width: 375px) {
+          .trust-bar { gap: 16px !important; flex-direction: column; align-items: center; }
+        }
       `}</style>
 
             {/* NAV */}
@@ -789,7 +802,7 @@ export default function LandingPage() {
                             className="btn-primary"
                             style={{ fontSize: 13, padding: "8px 16px" }}
                         >
-                            Continue
+                            {!isLoading && isAuthenticated ? "Go to Dashboard" : "Start for Free"}
                         </Link>
                     </div>
                 </div>
@@ -878,7 +891,7 @@ export default function LandingPage() {
                     <p
                         style={{
                             fontSize: 17,
-                            color: "#64748b",
+                            color: "#94a3b8",
                             lineHeight: 1.75,
                             marginBottom: 36,
                             maxWidth: 520,
@@ -902,7 +915,7 @@ export default function LandingPage() {
                             className="btn-primary"
                             style={{ fontSize: 15, padding: "13px 28px" }}
                         >
-                            Start for free →
+                            Start for Free →
                         </Link>
                         <Link
                             to="#how-it-works"
@@ -925,8 +938,9 @@ export default function LandingPage() {
                 </div>
 
                 <div
+                    className="hero-mockup-wrap"
                     style={{
-                        maxWidth: 660,
+                        maxWidth: 780,
                         margin: "52px auto 0",
                         position: "relative",
                     }}
@@ -934,13 +948,20 @@ export default function LandingPage() {
                     <div
                         style={{
                             position: "absolute",
-                            inset: -30,
+                            inset: -40,
                             background:
-                                "radial-gradient(ellipse at 50% 100%, rgba(99,102,241,0.06) 0%, transparent 70%)",
+                                "radial-gradient(ellipse at 50% 80%, rgba(99,102,241,0.14) 0%, rgba(99,102,241,0.04) 45%, transparent 70%)",
                             pointerEvents: "none",
+                            borderRadius: 20,
                         }}
                     />
-                    <div style={{ position: "relative" }}>
+                    <div
+                        style={{
+                            position: "relative",
+                            boxShadow: "0 8px 60px rgba(99,102,241,0.18), 0 2px 24px rgba(0,0,0,0.6)",
+                            borderRadius: 6,
+                        }}
+                    >
                         <MockDashboard />
                     </div>
                 </div>
@@ -952,10 +973,11 @@ export default function LandingPage() {
                     padding: "20px 24px",
                     borderTop: `1px solid ${D.border}`,
                     borderBottom: `1px solid ${D.border}`,
-                    background: D.surface2,
+                    background: D.surface3,
                 }}
             >
                 <div
+                    className="trust-bar"
                     style={{
                         maxWidth: 900,
                         margin: "0 auto",
@@ -967,11 +989,11 @@ export default function LandingPage() {
                     }}
                 >
                     {[
-                        { val: "< 60s", label: "setup time" },
-                        { val: "Read-only", label: "Redis access" },
-                        { val: "AES-256", label: "URL encryption" },
-                        { val: "SSE", label: "live updates" },
-                        { val: "0 deploys", label: "required" },
+                        { val: "< 60s", label: "Setup Time" },
+                        { val: "Read-only", label: "Redis Access" },
+                        { val: "AES-256", label: "URL Encryption" },
+                        { val: "Live Updates", label: "Real-Time" },
+                        { val: "0 deploys", label: "Required" },
                     ].map((s) => (
                         <div key={s.label} style={{ textAlign: "center" }}>
                             <div
@@ -1002,7 +1024,7 @@ export default function LandingPage() {
             </section>
 
             {/* FEATURES */}
-            <section id="features" style={{ padding: "88px 24px" }}>
+            <section id="features" style={{ padding: "88px 24px", background: D.bg }}>
                 <div style={{ maxWidth: 1100, margin: "0 auto" }}>
                     <div style={{ textAlign: "center", marginBottom: 52 }}>
                         <p
@@ -1032,7 +1054,7 @@ export default function LandingPage() {
                         <p
                             style={{
                                 fontSize: 15,
-                                color: "#64748b",
+                                color: "#94a3b8",
                                 maxWidth: 480,
                                 margin: "0 auto",
                             }}
@@ -1108,7 +1130,7 @@ export default function LandingPage() {
                                 <p
                                     style={{
                                         fontSize: 13,
-                                        color: "#64748b",
+                                        color: "#94a3b8",
                                         lineHeight: 1.7,
                                         margin: 0,
                                     }}
@@ -1125,7 +1147,7 @@ export default function LandingPage() {
             <section
                 style={{
                     padding: "80px 24px",
-                    background: D.surface2,
+                    background: D.surface3,
                     borderTop: `1px solid ${D.border}`,
                     borderBottom: `1px solid ${D.border}`,
                 }}
@@ -1169,7 +1191,7 @@ export default function LandingPage() {
                         <p
                             style={{
                                 fontSize: 14,
-                                color: "#64748b",
+                                color: "#94a3b8",
                                 lineHeight: 1.75,
                                 marginBottom: 20,
                             }}
@@ -1200,7 +1222,7 @@ export default function LandingPage() {
                                         alignItems: "flex-start",
                                         gap: 10,
                                         fontSize: 14,
-                                        color: "#8b9ab5",
+                                        color: "#cbd5e1",
                                     }}
                                 >
                                     <span
@@ -1222,20 +1244,21 @@ export default function LandingPage() {
                     <div
                         style={{
                             background: D.surface,
-                            border: `1px solid ${D.border}`,
-                            borderRadius: 4,
-                            padding: "24px 20px",
+                            border: `1px solid ${D.border2}`,
+                            borderRadius: 6,
+                            padding: "28px 24px",
                             overflowY: "auto",
+                            boxShadow: "0 4px 24px rgba(0,0,0,0.35)",
                         }}
                     >
                         <div
                             style={{
-                                fontSize: 10,
+                                fontSize: 11,
                                 fontWeight: 600,
-                                color: D.muted,
+                                color: "#94a3b8",
                                 letterSpacing: "0.1em",
                                 textTransform: "uppercase",
-                                marginBottom: 14,
+                                marginBottom: 18,
                                 fontFamily: "'JetBrains Mono', monospace",
                             }}
                         >
@@ -1244,10 +1267,10 @@ export default function LandingPage() {
                         <FlowTreeDemo />
                         <div
                             style={{
-                                marginTop: 18,
+                                marginTop: 22,
                                 display: "flex",
                                 flexWrap: "wrap",
-                                gap: 6,
+                                gap: 8,
                             }}
                         >
                             {STATES.map((s) => (
@@ -1256,13 +1279,13 @@ export default function LandingPage() {
                                     style={{
                                         display: "inline-flex",
                                         alignItems: "center",
-                                        gap: 5,
-                                        fontSize: 10,
+                                        gap: 6,
+                                        fontSize: 12,
                                         fontWeight: 600,
                                         color: s.color,
                                         background: s.bg,
-                                        padding: "3px 8px",
-                                        borderRadius: 2,
+                                        padding: "4px 10px",
+                                        borderRadius: 3,
                                         textTransform: "uppercase",
                                         letterSpacing: "0.06em",
                                         fontFamily:
@@ -1271,8 +1294,8 @@ export default function LandingPage() {
                                 >
                                     <span
                                         style={{
-                                            width: 5,
-                                            height: 5,
+                                            width: 7,
+                                            height: 7,
                                             borderRadius: "50%",
                                             background: s.dot,
                                         }}
@@ -1286,7 +1309,7 @@ export default function LandingPage() {
             </section>
 
             {/* HOW IT WORKS */}
-            <section id="how-it-works" style={{ padding: "88px 24px" }}>
+            <section id="how-it-works" style={{ padding: "88px 24px", background: D.bg }}>
                 <div style={{ maxWidth: 860, margin: "0 auto" }}>
                     <div style={{ textAlign: "center", marginBottom: 52 }}>
                         <p
@@ -1378,7 +1401,7 @@ export default function LandingPage() {
                                     <p
                                         style={{
                                             fontSize: 14,
-                                            color: "#64748b",
+                                            color: "#94a3b8",
                                             lineHeight: 1.7,
                                         }}
                                     >
@@ -1576,6 +1599,7 @@ export default function LandingPage() {
                 id="security"
                 style={{
                     padding: "80px 24px",
+                    background: D.surface3,
                     borderTop: `1px solid ${D.border}`,
                 }}
             >
@@ -1618,7 +1642,7 @@ export default function LandingPage() {
                         <p
                             style={{
                                 fontSize: 14,
-                                color: "#64748b",
+                                color: "#94a3b8",
                                 lineHeight: 1.75,
                             }}
                         >
@@ -1653,14 +1677,15 @@ export default function LandingPage() {
                                     gap: 12,
                                     alignItems: "flex-start",
                                     background: D.surface,
-                                    border: `1px solid ${D.border}`,
-                                    borderRadius: 3,
-                                    padding: "12px 14px",
+                                    border: `1px solid ${D.border2}`,
+                                    borderRadius: 4,
+                                    padding: "14px 16px",
+                                    boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
                                 }}
                             >
                                 <span
                                     style={{
-                                        fontSize: 16,
+                                        fontSize: 18,
                                         flexShrink: 0,
                                         marginTop: 1,
                                     }}
@@ -1680,8 +1705,9 @@ export default function LandingPage() {
                                     <div
                                         style={{
                                             fontSize: 12,
-                                            color: D.muted,
-                                            marginTop: 2,
+                                            color: "#94a3b8",
+                                            marginTop: 3,
+                                            lineHeight: 1.6,
                                         }}
                                     >
                                         {s.sub}
@@ -1700,6 +1726,7 @@ export default function LandingPage() {
                     padding: "88px 24px",
                     background: D.surface2,
                     borderTop: `1px solid ${D.border}`,
+                    borderBottom: `1px solid ${D.border}`,
                 }}
             >
                 <div style={{ maxWidth: 960, margin: "0 auto" }}>
@@ -1728,7 +1755,7 @@ export default function LandingPage() {
                         >
                             Simple, honest pricing
                         </h2>
-                        <p style={{ fontSize: 14, color: "#64748b" }}>
+                        <p style={{ fontSize: 14, color: "#94a3b8" }}>
                             $9.99/month is low enough to expense without a
                             meeting. Start free, upgrade when you see the value.
                         </p>
@@ -1752,6 +1779,12 @@ export default function LandingPage() {
                                         : D.surface,
                                     padding: "28px 24px",
                                     position: "relative",
+                                    boxShadow: plan.featured
+                                        ? "0 4px 32px rgba(99,102,241,0.15)"
+                                        : "0 2px 12px rgba(0,0,0,0.3)",
+                                    border: plan.featured
+                                        ? "1px solid rgba(99,102,241,0.25)"
+                                        : `1px solid ${D.border2}`,
                                 }}
                             >
                                 {plan.featured && (
@@ -1810,19 +1843,19 @@ export default function LandingPage() {
                                 <p
                                     style={{
                                         fontSize: 13,
-                                        color: "#64748b",
+                                        color: "#94a3b8",
                                         marginBottom: 20,
                                     }}
                                 >
                                     {plan.desc}
                                 </p>
                                 <Link
-                                    to="#"
+                                    to={plan.ctaTo}
                                     style={{
                                         display: "block",
                                         textAlign: "center",
                                         padding: "10px 0",
-                                        borderRadius: 2,
+                                        borderRadius: 3,
                                         fontWeight: 600,
                                         fontSize: 13,
                                         textDecoration: "none",
@@ -1831,17 +1864,12 @@ export default function LandingPage() {
                                             : "transparent",
                                         color: plan.featured
                                             ? "#fff"
-                                            : "#64748b",
+                                            : "#cbd5e1",
                                         marginBottom: 20,
                                         border: plan.featured
                                             ? "none"
                                             : `1px solid ${D.border2}`,
-                                        opacity: plan.name === "Team" ? 0.5 : 1,
-                                        cursor:
-                                            plan.name === "Team"
-                                                ? "not-allowed"
-                                                : "pointer",
-                                        transition: "background 0.15s",
+                                        transition: "background 0.15s, color 0.15s",
                                     }}
                                 >
                                     {plan.cta}
@@ -1863,14 +1891,14 @@ export default function LandingPage() {
                                                 display: "flex",
                                                 gap: 8,
                                                 fontSize: 13,
-                                                color: "#8b9ab5",
+                                                color: "#cbd5e1",
                                             }}
                                         >
                                             <span
                                                 style={{
                                                     color: plan.featured
                                                         ? "#818cf8"
-                                                        : "#4a5568",
+                                                        : "#6366f1",
                                                     fontWeight: 700,
                                                     flexShrink: 0,
                                                 }}
@@ -1956,7 +1984,7 @@ export default function LandingPage() {
                     <p
                         style={{
                             fontSize: 15,
-                            color: "#64748b",
+                            color: "#94a3b8",
                             marginBottom: 30,
                         }}
                     >
@@ -1968,7 +1996,7 @@ export default function LandingPage() {
                         className="btn-primary"
                         style={{ fontSize: 15, padding: "13px 32px" }}
                     >
-                        Get Started Free →
+                        Start for Free →
                     </Link>
                     <p
                         style={{
@@ -2021,6 +2049,9 @@ export default function LandingPage() {
                     </div>
                     <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
                         {[
+                            { label: "Docs", url: "#" },
+                            { label: "Status", url: "#" },
+                            { label: "Contact", url: "#" },
                             { label: "Privacy", url: "/privacy" },
                             { label: "Terms", url: "/terms" },
                             { label: "Security", url: "#security" },
@@ -2030,7 +2061,7 @@ export default function LandingPage() {
                                 to={l.url}
                                 style={{
                                     fontSize: 12,
-                                    color: D.muted,
+                                    color: "#94a3b8",
                                     textDecoration: "none",
                                 }}
                             >
@@ -2041,7 +2072,7 @@ export default function LandingPage() {
                     <p
                         style={{
                             fontSize: 12,
-                            color: D.subtle,
+                            color: "#94a3b8",
                             margin: 0,
                             fontFamily: "'JetBrains Mono', monospace",
                         }}

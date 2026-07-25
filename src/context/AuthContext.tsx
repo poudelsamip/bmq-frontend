@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } finally {
             tokenStore.set(null);
             setUser(null);
-            navigateRef.current("/login", { replace: true });
+            navigateRef.current("/auth", { replace: true });
         }
     }, []);
 
@@ -82,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const handler = () => {
             setUser(null);
             tokenStore.set(null);
-            navigateRef.current("/login", { replace: true });
+            navigateRef.current("/auth", { replace: true });
         };
         window.addEventListener("auth:expired", handler);
         return () => window.removeEventListener("auth:expired", handler);

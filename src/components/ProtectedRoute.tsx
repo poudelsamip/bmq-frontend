@@ -6,7 +6,7 @@ export default function ProtectedRoute() {
 
     // waiting for the refresh cookie check show nothing yet.
     // Without this guard, isAuthenticated is false for ~200ms on every
-    // reload and the user gets flashed to /login before being redirected back.
+    // reload and the user gets flashed to /auth before being redirected back.
     if (isLoading) {
         return (
             <div className="flex h-screen w-full items-center justify-center bg-[#f7f9fb]">

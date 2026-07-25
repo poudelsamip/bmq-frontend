@@ -19,10 +19,10 @@ export default function OAuthCallbackPage() {
                     login(res.data.accessToken, res.data.user);
                     navigate("/dashboard", { replace: true });
                 } else {
-                    navigate("/login", { replace: true });
+                    navigate("/auth", { replace: true });
                 }
             } catch {
-                navigate("/login", { replace: true });
+                navigate("/auth", { replace: true });
             }
         };
 
