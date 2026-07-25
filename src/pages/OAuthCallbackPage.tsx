@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useNavigate }       from "react-router-dom";
 import { authApi }           from "../api/auth.api";
 import { useAuth }           from "../context/AuthContext";
+import { tokenStore }        from "../api/client";
 
 export default function OAuthCallbackPage() {
     const { login }   = useAuth();
@@ -12,21 +13,42 @@ export default function OAuthCallbackPage() {
         if (processed.current) return;
         processed.current = true;
 
-        const refreshToken = async () => {
+        const handleCallback = async () => {
+            // Primary path: access token is in the URL query param
+            const params = new URLSearchParams(window.location.search);
+            const token  = params.get("token");
+
+            if (token) {
+                try {
+                    // Store the token so the /me request is authenticated
+                    tokenStore.set(token);
+                    const res = await authApi.getMe();
+                    if (res.data?.user) {
+                        login(token, res.data.user);
+                        navigate("/dashboard", { replace: true });
+                        return;
+                    }
+                } catch {
+                    tokenStore.set(null);
+                }
+            }
+
+            // Fallback: try the refresh cookie (works when same-origin or cookie was accepted)
             try {
                 const res = await authApi.refresh();
                 if (res.data?.accessToken && res.data?.user) {
                     login(res.data.accessToken, res.data.user);
                     navigate("/dashboard", { replace: true });
-                } else {
-                    navigate("/auth", { replace: true });
+                    return;
                 }
             } catch {
-                navigate("/auth", { replace: true });
+                // refresh also failed
             }
+
+            navigate("/auth", { replace: true });
         };
 
-        refreshToken();
+        handleCallback();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (

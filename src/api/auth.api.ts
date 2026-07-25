@@ -50,6 +50,11 @@ export const authApi = {
         const res = await api.post<ApiResponse<null>>("/auth/logout");
         return res.data;
     },
+
+    getMe: async () => {
+        const res = await api.get<ApiResponse<{ user: AuthUser }>>("/auth/me");
+        return res.data;
+    },
 };
 
 export const settingsApi = {
