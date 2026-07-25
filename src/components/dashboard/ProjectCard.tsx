@@ -188,13 +188,13 @@ export default function ProjectCard({ project, onNavigate, onDelete }: ProjectCa
                         opacity: 0.8,
                     }}
                 >
-                    {"redis://localhost:6379"}
+                    {"redis://......."}
                 </p>
 
                 {/* Status badges */}
                 <div className="flex flex-wrap gap-2 mb-2">
-                    <StatBadge color="green" label="Completed" />
-                    <StatBadge color="red" label="0 Failed" />
+                    <StatBadge color="green" label="LIVE" />
+                    {/* <StatBadge color="red" label="0 Failed" /> */}
                 </div>
             </div>
 

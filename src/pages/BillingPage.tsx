@@ -1,6 +1,6 @@
 import CurrentPlan from "../components/billings/CurrentPlan";
 import PlansPricing from "../components/billings/PlansPricing";
-import RecentTransactions from "../components/billings/RecentTransactions";
+// import RecentTransactions from "../components/billings/RecentTransactions";
 
 export default function BillingPage() {
     return (
@@ -14,8 +14,8 @@ export default function BillingPage() {
             {/* Pricing Plans Grid */}
             <PlansPricing />
 
-            {/* Recent Transactions */}
-            <RecentTransactions />
+            {/* Recent Transactions — commented out until payment history API is ready */}
+            {/* <RecentTransactions /> */}
         </div>
     );
 }

@@ -6,19 +6,23 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import JobDrawer from "../components/Jobs/JobDrawer";
 import { ChevronRight } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 export default function JobsPage() {
     const { id, queueName } = useParams();
+    const { user } = useAuth();
 
     const [showDrawer, setShowDrawer] = useState<boolean>(false);
     const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+
+    const isFreeTier = user?.plan !== "pro";
 
     const onJobClick = (jobId: string) => {
         setSelectedJobId(jobId);
         setShowDrawer(true);
     };
 
-    const navigate= useNavigate();
+    const navigate = useNavigate();
 
     const {
         data: jobs,
@@ -58,6 +62,9 @@ export default function JobsPage() {
         );
     }
 
+    // The backend already enforces the free-tier limit — use jobs directly
+    const visibleJobs = jobs ?? [];
+
     return (
         <main
             className="relative p-6 h-[calc(100vh-64px)] -m-6"
@@ -81,7 +88,11 @@ export default function JobsPage() {
                     </h1>
                 </div>
                 <JobsHeader />
-                <JobsTable jobs={jobs || []} onJobClick={onJobClick} />
+                <JobsTable
+                    jobs={visibleJobs}
+                    onJobClick={onJobClick}
+                    isFreeTier={isFreeTier}
+                />
             </>
         </main>
     );

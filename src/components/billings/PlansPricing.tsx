@@ -7,7 +7,7 @@ const plans = [
     description:
       "Essential monitoring tools for personal projects and getting started.",
     features: [
-      "2 Projects",
+      "1 Project",
       "Last 30 Jobs",
       "Live Queue Dashboard",
       "Basic Queue Analytics",
