@@ -192,7 +192,7 @@ export default function Notification() {
                         border: "1px solid rgba(168,85,247,0.25)",
                     }}
                 >
-                    <span className="text-[20px]">👑</span>
+                    <Crown />
                     <div className="flex-1 min-w-0">
                         <p
                             className="text-[13px] font-semibold"

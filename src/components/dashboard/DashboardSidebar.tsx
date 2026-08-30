@@ -123,56 +123,7 @@ export default function DashboardSidebar() {
                 ))}
             </nav>
 
-            {/* Profile at bottom */}
-            <div
-                style={{
-                    borderTop: "1px solid var(--color-outline-variant)",
-                    paddingTop: 16,
-                }}
-            >
-                <NavLink
-                    to="/dashboard/profile"
-                    className="flex items-center gap-3 py-3 text-sm font-medium transition-colors duration-150 outline-none"
-                    style={({ isActive }) =>
-                        isActive
-                            ? {
-                                  borderLeft: "4px solid var(--color-primary)",
-                                  color: "var(--color-primary)",
-                                  backgroundColor: "rgba(183, 196, 255, 0.10)",
-                                  paddingLeft: "12px",
-                                  paddingRight: "16px",
-                              }
-                            : {
-                                  color: "var(--color-on-surface-variant)",
-                                  paddingLeft: "16px",
-                                  paddingRight: "16px",
-                              }
-                    }
-                    onMouseEnter={(e) => {
-                        const el = e.currentTarget as HTMLElement;
-                        if (!el.getAttribute("aria-current")) {
-                            el.style.color = "var(--color-on-surface)";
-                            el.style.backgroundColor =
-                                "var(--color-surface-container-high)";
-                        }
-                    }}
-                    onMouseLeave={(e) => {
-                        const el = e.currentTarget as HTMLElement;
-                        if (!el.getAttribute("aria-current")) {
-                            el.style.color = "";
-                            el.style.backgroundColor = "";
-                        }
-                    }}
-                >
-                    <span
-                        className="material-symbols-outlined"
-                        style={{ fontSize: 20 }}
-                    >
-                        account_circle
-                    </span>
-                    <span style={{ fontSize: 14 }}>Profile</span>
-                </NavLink>
-            </div>
+
         </aside>
     );
 }

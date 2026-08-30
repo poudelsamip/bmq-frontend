@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Input } from "../../pages/SettingsPage";
 import { useAuth } from "../../context/AuthContext";
 import { settingsApi } from "../../api/auth.api";
+import { Lock } from "lucide-react";
 
 export default function ProfileInfo() {
     const { user, updateUser } = useAuth();
@@ -84,7 +85,7 @@ export default function ProfileInfo() {
                                 title="Email cannot be changed"
                                 style={{ color: "var(--color-on-surface-variant)" }}
                             >
-                                🔒
+                            <Lock size={14} />
                             </span>
                         </div>
                     </div>

@@ -1,12 +1,22 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import {
+    Zap,
+    GitBranch,
+    Radio,
+    Search,
+    RefreshCw,
+    Building2,
+    ShieldCheck,
+    Eye,
+} from "lucide-react";
 
 const NAV_LINKS = ["Features", "How It Works", "Pricing"];
 
 const FEATURES = [
     {
-        icon: "⚡",
+        icon: <Zap size={20} />,
         title: "One-Minute Setup",
         desc: "Paste your Redis URL. No code changes, no npm installs. You'll see your queues in under 60 seconds.",
         color: "#818cf8",
@@ -14,7 +24,7 @@ const FEATURES = [
         border: "rgba(99,102,241,0.18)",
     },
     {
-        icon: "🌳",
+        icon: <GitBranch size={20} />,
         title: "Flow Tree Visualization",
         desc: "See the full parent-child job hierarchy in an interactive tree. Understand dependencies at a glance.",
         color: "#22d3ee",
@@ -22,7 +32,7 @@ const FEATURES = [
         border: "rgba(8,145,178,0.18)",
     },
     {
-        icon: "📡",
+        icon: <Radio size={20} />,
         title: "Real-Time SSE Updates",
         desc: "Live job counts stream to your dashboard. Watch jobs move from waiting → active → completed without refreshing.",
         color: "#34d399",
@@ -30,7 +40,7 @@ const FEATURES = [
         border: "rgba(5,150,105,0.18)",
     },
     {
-        icon: "🔍",
+        icon: <Search size={20} />,
         title: "Job Inspector",
         desc: "Click any failed job and see the full payload, stack trace, error message, and retry count. Debug production in seconds.",
         color: "#fbbf24",
@@ -38,7 +48,7 @@ const FEATURES = [
         border: "rgba(217,119,6,0.18)",
     },
     {
-        icon: "🔁",
+        icon: <RefreshCw size={20} />,
         title: "One-Click Retry",
         desc: "Failed jobs get a Retry button. Click it, the job re-enters the queue immediately. No Redis CLI, no SSH.",
         color: "#c084fc",
@@ -46,7 +56,7 @@ const FEATURES = [
         border: "rgba(124,58,237,0.18)",
     },
     {
-        icon: "🏢",
+        icon: <Building2 size={20} />,
         title: "Multi-Project Support",
         desc: "Connect multiple Redis instances — staging, production, different services. Each isolated with its own encrypted connection.",
         color: "#f472b6",
@@ -1660,12 +1670,12 @@ export default function LandingPage() {
                     >
                         {[
                             {
-                                icon: "🔐",
+                                icon: <ShieldCheck size={18} />,
                                 label: "AES-256-GCM encryption",
                                 sub: "Redis URLs encrypted at rest, Only decrypted in memory during request processing",
                             },
                             {
-                                icon: "👁",
+                                icon: <Eye size={18} />,
                                 label: "Read-only access",
                                 sub: "We only write when you explicitly retry or delete a job",
                             },
